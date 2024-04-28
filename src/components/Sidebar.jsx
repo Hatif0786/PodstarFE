@@ -1,16 +1,19 @@
 import React from 'react';
-import {HomeRounded, CloseRounded, SearchRounded, FavoriteRounded, LightModeRounded, LogoutRounded, DarkModeRounded, CloudUploadRounded} from "@mui/icons-material";
+import { HomeRounded, CloseRounded, SearchRounded, FavoriteRounded, LightModeRounded, LogoutRounded, DarkModeRounded, CloudUploadRounded } from "@mui/icons-material";
 import styled from 'styled-components';
-import logo from  "../Images/Logo.png";
-import {Link} from 'react-router-dom';
-const Sidebar = ({menuOpen, setMenuOpen, setDarkMode, darkMode}) => {
+import logo from "../Images/Logo.png";
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
+const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
+  const history = useNavigate();
+  
   const MenuContainer = styled.div`
     flex:0.5;
     flex-direction: column;
     display:flex;
     background: ${({ theme }) => theme.bg};
-    color: ${({theme}) => theme.text_primary};
+    color: ${({ theme }) => theme.text_primary};
     height: 100vh;
     @media (max-width: 1100px) {
         position: fixed;
@@ -22,13 +25,13 @@ const Sidebar = ({menuOpen, setMenuOpen, setDarkMode, darkMode}) => {
     }
   `;
   const Logo = styled.div`
-    color: ${({theme}) => theme.primary};
+    color: ${({ theme }) => theme.primary};
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     font-weight: bold;
-    font-size:20px;
+    font-size: 20px;
     margin: 16px 0px;
     padding-left: 16px;
   `;
@@ -58,25 +61,23 @@ const Sidebar = ({menuOpen, setMenuOpen, setDarkMode, darkMode}) => {
     &:hover .content-container {
         background-color: ${({ theme }) => theme.text_secondary + 50};
     }
-    `;
+  `;
 
-    const ContentContainer = styled.div`
+  const ContentContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 12px;
-    `;
+  `;
 
-    const NavText = styled.div`
+  const NavText = styled.div`
     padding: 12px 0px;
     text-decoration: none !important;
-    `;
-
-
+  `;
 
   const HR = styled.div`
     width: 100%;
     height: 1px;
-    background-color: ${({ theme }) => theme.text_secondary +50};
+    background-color: ${({ theme }) => theme.text_secondary + 50};
     margin: 10px 0px;
   `;
 
@@ -85,80 +86,78 @@ const Sidebar = ({menuOpen, setMenuOpen, setDarkMode, darkMode}) => {
     @media (max-width: 1100px){
         display:block;
     }
+    cursor: pointer;
   `;
 
   const menuItems = [
     {
-        link:"/",
-        name:"Dashboard",
-        icon: <HomeRounded/>
+      link: "/",
+      name: "Dashboard",
+      icon: <HomeRounded />
     },
     {
-        link:"/search",
-        name:"Search",
-        icon: <SearchRounded/>
+      link: "/search",
+      name: "Search",
+      icon: <SearchRounded />
     },
     {
-        link:"/favourite",
-        name:"Favourites",
-        icon: <FavoriteRounded/>
+      link: "/favourite",
+      name: "Favourites",
+      icon: <FavoriteRounded />
     }
-  ]
-
+  ];
 
   const button = [
     {
-        fun: () => console.log("Upload"),
-        name:"Upload",
-        icon: <CloudUploadRounded/>
+      fun: () => history("/upload-audio"),
+      name: "Upload",
+      icon: <CloudUploadRounded />
     },
     {
-        fun: () => setDarkMode(!darkMode),
-        name:darkMode? "Light Mode": "Dark Mode",
-        icon: darkMode?<LightModeRounded/>: <DarkModeRounded/>
+      fun: () => setDarkMode(!darkMode),
+      name: darkMode ? "Light Mode" : "Dark Mode",
+      icon: darkMode ? <LightModeRounded /> : <DarkModeRounded />
     },
     {
-        fun: () => console.log("Logout"),
-        name:"Logout",
-        icon: <LogoutRounded/>
+      fun: () => console.log("Logout"),
+      name: "Logout",
+      icon: <LogoutRounded />
     }
-  ]
+  ];
 
   return (
     <MenuContainer menuOpen={menuOpen}>
-        <Flex>
-            
-            <Logo>
-                <Image src={logo} alt="logo" />
-                Podstream
-                </Logo>
-            <Close onClick={setMenuOpen(false)}>
-                <CloseRounded/>
-            </Close>
-        </Flex>
+      <Flex>
+        <Logo>
+          <Image src={logo} alt="logo" />
+          Podstream
+        </Logo>
+        <Close onClick={() => setMenuOpen(false)}>
+          <CloseRounded />
+        </Close>
+      </Flex>
 
-        {menuItems.map((item) => (
-        <Link key={item.name} to="/" style={{textDecoration: "none"}}>
-            <Elements>
+      {menuItems.map((item) => (
+        <Link key={item.name} to={item.link} style={{ textDecoration: "none" }}>
+          <Elements>
             <ContentContainer className="content-container">
-                {item.icon}
-                <NavText>{item.name}</NavText>
+              {item.icon}
+              <NavText>{item.name}</NavText>
             </ContentContainer>
-            </Elements>
+          </Elements>
         </Link>
-        ))}
+      ))}
 
-        <HR></HR>
+      <HR />
 
-
-        {button.map((item) => (
-            <Elements key={item.name} onClick={item.fun}>
-                {item.icon}
-                    <NavText>{item.name}</NavText>
-            </Elements>
-        ))}
+      {button.map((item) => (
+        <Elements key={item.name} onClick={item.fun}>
+          {item.icon}
+          <NavText>{item.name}</NavText>
+        </Elements>
+      ))}
     </MenuContainer>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;
