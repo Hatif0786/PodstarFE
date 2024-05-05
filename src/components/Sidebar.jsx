@@ -33,7 +33,7 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
     font-weight: bold;
     font-size: 20px;
     margin: 16px 0px;
-    padding-left: 16px;
+    padding-left: 50px;
   `;
 
   const Image = styled.img`
@@ -59,7 +59,7 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
     color: ${({ theme }) => theme.text_secondary};
     width: 100%;
     &:hover .content-container {
-        background-color: ${({ theme }) => theme.text_secondary + 50};
+        // background-color: ${({ theme }) => theme.text_secondary + 50};
     }
   `;
 
@@ -130,7 +130,7 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
       <Flex>
         <Logo>
           <Image src={logo} alt="logo" />
-          Podstream
+          Podstar
         </Logo>
         <Close onClick={() => setMenuOpen(false)}>
           <CloseRounded />

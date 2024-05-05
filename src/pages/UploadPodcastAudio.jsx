@@ -7,6 +7,7 @@ const UploadPodcastAudio = () => {
   const [file, setFile] = useState("");
   const [loader, setLoader] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [err, setErr] = useState("");
   const navigate = useNavigate();
 
   const handleFileChange = (event) => {
@@ -14,25 +15,28 @@ const UploadPodcastAudio = () => {
     setFileName(event.target.files[0].name);
   };
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     event.preventDefault();
     setLoader(true);
     const formData = new FormData();
     formData.append("album", file);
 
-    axios
+    const resp = await axios
       .post("http://localhost:5000/api/Album/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
-      .then((response) => {
-        setLoader(false);
-        navigate("/upload-podcast", { state: { responseData: response.data } });
-      })
-      .catch((error) => {
-        console.error(error);
       });
+
+      if(resp.data==="Invalid music file!"){
+        setLoader(false);
+        setErr(resp.data);
+      }
+      else{
+        setLoader(false);
+        navigate("/upload-podcast", { state: { responseData: resp.data } });
+      }
+      
   };
 
   return (
@@ -60,11 +64,16 @@ const UploadPodcastAudio = () => {
             marginTop: "8%",
           }}
         >
+
+        {err && 
+          <div className="container" style={{paddingLeft:"14%"}}>
+            <h1 style={{ color: "red", margin: "25px" }}><b>{err}</b></h1>
+          </div>}
           <form className="file-upload-form">
             <label htmlFor="file" className="file-upload-label">
               <div
                 className="file-upload-design"
-                style={{ paddingLeft: "90px", paddingRight: "90px" }}
+                style={{ paddingLeft: "110px", paddingRight: "90px" }}
               >
                 <svg viewBox="0 0 640 512" height="1em">
                   <path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"></path>
@@ -80,8 +89,10 @@ const UploadPodcastAudio = () => {
       )}
 
       {file && (
-        <div style={{ marginLeft: "30%" }}>
-          <h3 style={{ color: "#be1adb", margin: "25px" }}>{fileName}</h3>
+        <div style={{ marginLeft: "28%" }}>
+          <div className="container" style={{textAlign: "center", marginRight:"45%"}}>
+            <h3 style={{ color: "#be1adb", margin: "25px" }}>{fileName}</h3>
+          </div>
 
           <button
             className="button"
@@ -94,6 +105,8 @@ const UploadPodcastAudio = () => {
           </button>
         </div>
       )}
+
+      
     </>
   );
 };

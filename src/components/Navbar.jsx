@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { MenuRounded, PersonRounded } from "@mui/icons-material";
 import { IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
+import logo from "../Images/Logo.png";
+import "../css/navbar.css";
+import { useLocation } from 'react-router-dom';
 
 const NavbarDiv = styled.div`
     display: flex;
@@ -21,6 +24,19 @@ const NavbarDiv = styled.div`
     }
 `;
 
+
+const Logo = styled.div`
+    color: ${({ theme }) => theme.primary};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: bold;
+    font-size: 20px;
+    margin: 16px 0px;
+    padding-left: 10px;
+  `;
+
 const ButtonDiv = styled.div`
     font-size:14px;
     cursor: pointer;
@@ -35,22 +51,45 @@ const ButtonDiv = styled.div`
     padding: 8px 10px;
 `;
 
+const Image = styled.img`
+    height: 40px;
+    `;
 
 const IcoButton = styled(IconButton)`
     color: ${({ theme }) => theme.text_secondary} !important;
 `;
 
-const Navbar = ({ toggleMenu, menuOpen }) => {
-    console.log("Menu open:", menuOpen);
+const Navbar = ({ toggleMenu, menuOpen, setDarkMode, darkMode }) => {
+    const [userlogged, setUserlogged] = useState(false);
+    const location = useLocation();
+    const toggle = () => {
+        setDarkMode(!darkMode);
+    }
     return (
         <NavbarDiv>
-            <IcoButton onClick={toggleMenu}>
+            {userlogged &&<IcoButton onClick={toggleMenu}>
                 <MenuRounded />
-            </IcoButton>
-            <ButtonDiv as={Link} to="/login">
-                <PersonRounded />
-                Login
-            </ButtonDiv>
+            </IcoButton>}
+            <Logo>
+                <Image src={logo} alt="logo" />
+                Podstar
+            </Logo>
+            <label className="switch" style={{display:"flex", marginLeft:"auto"}}>
+                <input type="checkbox" checked={darkMode} onChange={toggle}/>
+                <span className="slider" ></span>
+            </label>
+            {location.pathname !== '/login' && (
+                <ButtonDiv as={Link} to="/login" style={{ display: "flex" }}>
+                    <PersonRounded />
+                    Login
+                </ButtonDiv>
+            )}
+            {location.pathname !== '/signup' && (
+                <ButtonDiv as={Link} to="/signup" style={{ display: "flex", paddingRight: "6.5rem" }}>
+                    <PersonRounded />
+                    Register
+                </ButtonDiv>
+            )}
         </NavbarDiv>
     );
 }

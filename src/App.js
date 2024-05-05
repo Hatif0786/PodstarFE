@@ -11,6 +11,7 @@ import Favourite from "./pages/Favourite";
 import UploadPodcast from "./pages/UploadPodcast";
 import UploadPodcastAudio from "./pages/UploadPodcastAudio";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   const Container = styled.div`
@@ -28,7 +29,7 @@ function App() {
     flex: 3;
   `;
 
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -41,13 +42,14 @@ function App() {
         <BrowserRouter>
           {menuOpen && (<Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} />)}
           <Frame>
-            <Navbar toggleMenu={toggleMenu} menuOpen={menuOpen} />
+            <Navbar toggleMenu={toggleMenu} menuOpen={menuOpen} setDarkMode={setDarkMode} darkMode={darkMode}  />
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/upload-podcast" element={<UploadPodcast />} />
               <Route path="/search" element={<Search />} />
               <Route path="/favourite" element={<Favourite />} />
-              <Route path="/login"  element={<Login/>}/>
+              <Route path="/login"  element={<Login darkMode={darkMode}/>}/>
+              <Route path="/signup"  element={<Register darkMode={darkMode}/>}/>
               <Route path="/upload-audio" element={<UploadPodcastAudio />} />
             </Routes>
           </Frame>
