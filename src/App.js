@@ -48,7 +48,7 @@ function App() {
               <Route path="/upload-podcast" element={<UploadPodcast />} />
               <Route path="/search" element={<Search />} />
               <Route path="/favourite" element={<Favourite />} />
-              <Route path="/login"  element={<Login darkMode={darkMode}/>}/>
+              <Route path="/login"  element={<Login darkMode={darkMode} setMenuOpen={setMenuOpen}/>}/>
               <Route path="/signup"  element={<Register darkMode={darkMode}/>}/>
               <Route path="/upload-audio" element={<UploadPodcastAudio />} />
             </Routes>

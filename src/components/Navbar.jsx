@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { MenuRounded, PersonRounded } from "@mui/icons-material";
 import { IconButton } from '@mui/material';
@@ -60,14 +60,13 @@ const IcoButton = styled(IconButton)`
 `;
 
 const Navbar = ({ toggleMenu, menuOpen, setDarkMode, darkMode }) => {
-    const [userlogged, setUserlogged] = useState(false);
     const location = useLocation();
     const toggle = () => {
         setDarkMode(!darkMode);
     }
     return (
         <NavbarDiv>
-            {userlogged &&<IcoButton onClick={toggleMenu}>
+            {menuOpen&&<IcoButton onClick={toggleMenu}>
                 <MenuRounded />
             </IcoButton>}
             <Logo>
