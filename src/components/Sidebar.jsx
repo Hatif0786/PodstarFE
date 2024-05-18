@@ -109,7 +109,10 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
 
   const button = [
     {
-      fun: () => history("/upload-audio"),
+      fun: () => {
+        setMenuOpen(false);
+        history("/upload-audio")
+      },
       name: "Upload",
       icon: <CloudUploadRounded />
     },

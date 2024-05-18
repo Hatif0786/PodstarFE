@@ -5,7 +5,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Register = (darkMode) => {
+const Register = ({darkMode}) => {
   const [loader, setLoader] = useState(false);
   const [err, setErr] = useState("");
   const navigate = useNavigate();

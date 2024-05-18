@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 
-const Login = (darkMode, setMenuOpen) => {
+const Login = ({darkMode, setMenuOpen, setUserlogged}) => {
   const [err, setErr] = useState("");
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
@@ -23,9 +24,16 @@ const Login = (darkMode, setMenuOpen) => {
     try{
         const resp = await axios.post('http://localhost:5000/api/user/signin', user);
         setLoader(false);
-        console.log(resp)
         if (resp.status === 200 && resp.data.user.role==="ADMIN") {
-          setMenuOpen(true);
+          //localStorage.setItem("user", JSON.stringify(resp.data.user));
+          //localStorage.setItem("token", resp.data.token);
+          Cookies.set("user", JSON.stringify(resp.data.user), {
+            expires: 1 / 24, // Set cookie expiration to 1 hour
+          });
+          Cookies.set("token", resp.data.token, {
+            expires: 1 / 24, // Set cookie expiration to 1 hour
+          });
+          setUserlogged(true);
           navigate("/");
         }
       }catch (error) {
@@ -55,7 +63,7 @@ const Login = (darkMode, setMenuOpen) => {
         <div style={{ height: "100vh", overflowY: "auto", paddingBottom: "20px" }}>
           <div className="container text-center" style={{ marginTop: "70px", marginBottom: "30px"}}>
               <div style={{ textAlign: "center" }}>
-                <h1 className="heading" style={{ fontSize: "30px", margin: "10px 0", color: darkMode ? "#be1adb": "black"}}><b>Sign Up with Podstar</b></h1>
+                <h1 className="heading" style={{ fontSize: "30px", margin: "10px 0", color: darkMode ? "#be1adb" : "black"}}><b>Sign In with Podstar</b></h1>
               </div>
               <div style={{ textAlign: "center" }}>
                 {err && 

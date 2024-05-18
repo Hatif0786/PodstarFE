@@ -14,6 +14,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userlogged, setUserlogged] = useState(false);
+
   const Container = styled.div`
     display: flex;
     overflow-x: hidden;
@@ -29,32 +33,33 @@ function App() {
     flex: 3;
   `;
 
-  const [darkMode, setDarkMode] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
   const toggleMenu = () => {
     setMenuOpen(prevMenuOpen => !prevMenuOpen);
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(prevDarkMode => !prevDarkMode);
+  };
+
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <Container >
-        <BrowserRouter>
-          {menuOpen && (<Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} />)}
+      <BrowserRouter>
+        <Container menuOpen={menuOpen}>
+          {menuOpen && (<Sidebar setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} />)}
           <Frame>
-            <Navbar toggleMenu={toggleMenu} menuOpen={menuOpen} setDarkMode={setDarkMode} darkMode={darkMode}  />
+            <Navbar userlogged={userlogged} setUserlogged={setUserlogged} toggleMenu={toggleMenu} setDarkMode={toggleDarkMode} darkMode={darkMode}  />
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/upload-podcast" element={<UploadPodcast />} />
+              <Route path="/upload-podcast" element={<UploadPodcast darkMode={darkMode} />} />
               <Route path="/search" element={<Search />} />
               <Route path="/favourite" element={<Favourite />} />
-              <Route path="/login"  element={<Login darkMode={darkMode} setMenuOpen={setMenuOpen}/>}/>
+              <Route path="/login"  element={<Login darkMode={darkMode} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen}/>}/>
               <Route path="/signup"  element={<Register darkMode={darkMode}/>}/>
               <Route path="/upload-audio" element={<UploadPodcastAudio />} />
             </Routes>
           </Frame>
-        </BrowserRouter>
-      </Container>
+        </Container>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

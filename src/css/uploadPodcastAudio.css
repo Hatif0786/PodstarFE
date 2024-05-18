@@ -55,7 +55,7 @@
   transition-duration: 0.3s;
   overflow: hidden;
   position: relative;
-  margin-left: 26%;
+  margin-left: 860px;
 }
 
 .svgIcon {
@@ -74,7 +74,7 @@
   color: #be1adb;
   border-color: #be1adb;
   align-items: center;
-  margin-left: 22%;
+  margin-left: 820px;
 }
 
 .button:hover .svgIcon {

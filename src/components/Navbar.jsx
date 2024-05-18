@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import styled from 'styled-components';
 import { MenuRounded, PersonRounded } from "@mui/icons-material";
 import { IconButton } from '@mui/material';
@@ -59,14 +59,14 @@ const IcoButton = styled(IconButton)`
     color: ${({ theme }) => theme.text_secondary} !important;
 `;
 
-const Navbar = ({ toggleMenu, menuOpen, setDarkMode, darkMode }) => {
+const Navbar = ({ toggleMenu, setUserlogged, userlogged, menuOpen, setDarkMode, darkMode }) => {
     const location = useLocation();
     const toggle = () => {
         setDarkMode(!darkMode);
     }
     return (
         <NavbarDiv>
-            {menuOpen&&<IcoButton onClick={toggleMenu}>
+            {userlogged&&<IcoButton onClick={toggleMenu}>
                 <MenuRounded />
             </IcoButton>}
             <Logo>
@@ -77,13 +77,13 @@ const Navbar = ({ toggleMenu, menuOpen, setDarkMode, darkMode }) => {
                 <input type="checkbox" checked={darkMode} onChange={toggle}/>
                 <span className="slider" ></span>
             </label>
-            {location.pathname !== '/login' && (
+            {!userlogged && location.pathname !== '/login' && (
                 <ButtonDiv as={Link} to="/login" style={{ display: "flex" }}>
                     <PersonRounded />
                     Login
                 </ButtonDiv>
             )}
-            {location.pathname !== '/signup' && (
+            {!userlogged && location.pathname !== '/signup' && (
                 <ButtonDiv as={Link} to="/signup" style={{ display: "flex", paddingRight: "6.5rem" }}>
                     <PersonRounded />
                     Register
@@ -93,4 +93,4 @@ const Navbar = ({ toggleMenu, menuOpen, setDarkMode, darkMode }) => {
     );
 }
 
-export default Navbar;
+export default memo(Navbar);
