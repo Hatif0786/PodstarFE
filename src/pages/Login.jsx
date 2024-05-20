@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const Login = ({darkMode, setMenuOpen, setUserlogged}) => {
+const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
   const [err, setErr] = useState("");
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
@@ -34,7 +34,8 @@ const Login = ({darkMode, setMenuOpen, setUserlogged}) => {
             expires: 1 / 24, // Set cookie expiration to 1 hour
           });
           setUserlogged(true);
-          navigate("/");
+          onLogin();
+          navigate("/dashboard");
         }
       }catch (error) {
         if (error.response && error.response.status === 409) {

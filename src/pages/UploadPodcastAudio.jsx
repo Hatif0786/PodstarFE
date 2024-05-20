@@ -4,7 +4,7 @@ import "../css/uploadPodcastAudio.css";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
-const UploadPodcastAudio = () => {
+const UploadPodcastAudio = ({menuOpened, setUserlogged, logout}) => {
   const [file, setFile] = useState("");
   const [loader, setLoader] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -19,6 +19,12 @@ const UploadPodcastAudio = () => {
   const handleFileUpload = async (event) => {
     event.preventDefault();
     setLoader(true);
+    if(!Cookies.get("token")){
+      logout()
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
     const formData = new FormData();
     formData.append("album", file);
     try{
@@ -57,6 +63,7 @@ const UploadPodcastAudio = () => {
       )}
 
       {!loader && (
+        <>
         <div
           style={{
             display: "inline-block",
@@ -68,11 +75,11 @@ const UploadPodcastAudio = () => {
         >
 
           {err && 
-            <div className="container" style={{paddingLeft:"14%"}}>
+            <div className="container" style={{}}>
               <h1 style={{ color: "red", margin: "25px" }}><b>{err}</b></h1>
             </div>
           }
-            <form className="file-upload-form">
+            <form className="file-upload-form" style={{marginRight: "300px"}}>
               <label htmlFor="file" className="file-upload-label">
                 <div
                   className="file-upload-design"
@@ -89,27 +96,26 @@ const UploadPodcastAudio = () => {
               </label>
             </form>
           </div>
+
+          {file && (
+            <div style={{ }}>
+              <div className="container" style={{textAlign: "center"}}>
+                <h3 style={{ color: "#be1adb", margin: "25px 25px 25px 0px" }}>{fileName}</h3>
+              </div>
+
+              <button
+                className="button"
+                onClick={handleFileUpload}
+                style={{ marginBottom: "20%" }}
+              >
+                <svg className="svgIcon" viewBox="0 0 384 512">
+                  <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path>
+                </svg>
+              </button>
+            </div>
+          )}
+        </>
         )}
-
-      {file && (
-        <div style={{ }}>
-          <div className="container" style={{textAlign: "center"}}>
-            <h3 style={{ color: "#be1adb", margin: "25px 25px 25px 0px" }}>{fileName}</h3>
-          </div>
-
-          <button
-            className="button"
-            onClick={handleFileUpload}
-            style={{ marginBottom: "20%" }}
-          >
-            <svg className="svgIcon" viewBox="0 0 384 512">
-              <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path>
-            </svg>
-          </button>
-        </div>
-      )}
-
-      
     </>
   );
 };

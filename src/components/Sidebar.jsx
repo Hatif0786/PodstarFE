@@ -5,10 +5,8 @@ import logo from "../Images/Logo.png";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
-  const history = useNavigate();
-  
-  const MenuContainer = styled.div`
+
+const MenuContainer = styled.div`
     flex:0.5;
     flex-direction: column;
     display:flex;
@@ -89,9 +87,13 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
     cursor: pointer;
   `;
 
+
+const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUserlogged }) => {
+  const history = useNavigate();
+  
   const menuItems = [
     {
-      link: "/",
+      link: "/dashboard",
       name: "Dashboard",
       icon: <HomeRounded />
     },
@@ -122,7 +124,13 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode }) => {
       icon: darkMode ? <LightModeRounded /> : <DarkModeRounded />
     },
     {
-      fun: () => console.log("Logout"),
+      fun: () => {
+        setMenuOpen(false);
+        logout();
+        setUserlogged(false);
+        history("/login")
+        return 
+      },
       name: "Logout",
       icon: <LogoutRounded />
     }
