@@ -34,6 +34,7 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
     setLoader(true);
     const albumDetails = {
       category: selectedCategory,
+      
     };
 
     try {

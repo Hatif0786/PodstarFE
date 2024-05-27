@@ -35,7 +35,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuOpened, setMenuOpened] = useState(true);
-  const { isAuthenticated, checkAuth, logout } = useAuth();
+  const { isAuthenticated, loading, checkAuth, logout } = useAuth();
   const [userlogged, setUserlogged] = useState(isAuthenticated);
 
   const toggleMenu = () => {
@@ -52,6 +52,9 @@ function App() {
     setUserlogged(isAuthenticated);
   }, [isAuthenticated]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
