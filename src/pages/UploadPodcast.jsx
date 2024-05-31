@@ -16,6 +16,7 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
   const [fileName, setFileName] = useState("No selected file");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [thumbnailId, setThumbnailId] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -34,7 +35,7 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
     setLoader(true);
     const albumDetails = {
       category: selectedCategory,
-      
+      description: description
     };
 
     try {
@@ -48,7 +49,7 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
         }
       );
       setLoader(false);
-      navigate("/")
+      navigate("/dashboard")
     } catch (error) {
       setLoader(false);
       if (error.response && error.response.status === 409) {
@@ -180,6 +181,18 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
                 ))}
               </select>
 
+              <input type="textarea" style={{
+                  borderRadius: "38px",
+                  border: "2.5px solid #be1adb",
+                  height: "90px",
+                  marginBottom: "18px",
+                  paddingRight: "10px",
+                  paddingLeft: "10px"
+                }} placeholder='Please fill your podcast short description'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                />
+
               {!thumbnailId && !thumbnailUrl && (
                 <div className="containert" style={{ marginBottom: "18px" }}>
                   <div className="header">
@@ -225,7 +238,6 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
                 <>
                   <input
                     type="text"
-                    className="input"
                     placeholder="Enter your thumbnail Url"
                     style={{
                       borderRadius: "30px",
@@ -242,7 +254,6 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
                   />
                   <input
                     type="text"
-                    className="input"
                     placeholder="Enter your thumbnail Id"
                     style={{
                       borderRadius: "30px",

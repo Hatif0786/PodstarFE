@@ -210,3 +210,14 @@
     radial-gradient(at 41% 67%, hsla(321,61%,77%,1) 0px, transparent 50%),
     radial-gradient(at 68% 68%, hsla(263,67%,69%,1) 0px, transparent 50%);
   }
+
+  @media (min-width: 576px) {
+    .col-sm-3 {
+        width: 330px;
+    }
+  }
+
+  @media only screen and (min-width: 600px) and (max) {
+    /* For tablets: */
+    .col-s-3 {width: 25%;}
+  }

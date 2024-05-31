@@ -129,10 +129,10 @@ const Dashboard = ({ logout, setUserlogged }) => {
             (<div key={category}>
               <h1 style={{ marginLeft: "3%", marginTop: "3%", fontSize: "25px" }}><b>{category}</b></h1>
               <div className="container-fluid text-center">
-                <div className="row" style={{ margin: "3%", marginLeft: "5%" }}>
+                <div className="row" style={{ marginTop:"3%", marginLeft: "5%" }}>
                   {categoryData[category].map((item, index) => (
                     <div key={index} className="col-sm-3">
-                      <div className="card" style={{ marginLeft: "5%" }} onClick={() => handleCardClick(item)}>
+                      <div className="card" style={{ marginLeft: "20px", marginBottom:"20px" }} onClick={() => handleCardClick(item)}>
                         <div className="card__view" style={{ backgroundImage: `url(${item.thumbnailUrl})` }}>
                           <div className="card__view__data">
                             <p className="card__view__preview">Preview</p>
