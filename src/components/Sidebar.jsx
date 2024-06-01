@@ -5,7 +5,6 @@ import logo from "../Images/Logo.png";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-
 const MenuContainer = styled.div`
     flex:0.5;
     flex-direction: column;
@@ -22,7 +21,8 @@ const MenuContainer = styled.div`
         transition: 0.3s ease-in-out;
     }
   `;
-  const Logo = styled.div`
+
+const Logo = styled.div`
     color: ${({ theme }) => theme.primary};
     display: flex;
     align-items: center;
@@ -32,21 +32,21 @@ const MenuContainer = styled.div`
     font-size: 20px;
     margin: 16px 0px;
     padding-left: 50px;
-  `;
+`;
 
-  const Image = styled.img`
+const Image = styled.img`
     height: 40px;
-  `;
+`;
 
-  const Flex = styled.div`
+const Flex = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding: 0px 12px;
-  `;
+`;
 
-  const Elements = styled.div`
+const Elements = styled.div`
     padding: 4px 16px;
     display: flex;
     flex-direction: row;
@@ -59,38 +59,37 @@ const MenuContainer = styled.div`
     &:hover .content-container {
         // background-color: ${({ theme }) => theme.text_secondary + 50};
     }
-  `;
+`;
 
-  const ContentContainer = styled.div`
+const ContentContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 12px;
-  `;
+`;
 
-  const NavText = styled.div`
+const NavText = styled.div`
     padding: 12px 0px;
     text-decoration: none !important;
-  `;
+`;
 
-  const HR = styled.div`
+const HR = styled.div`
     width: 100%;
     height: 1px;
     background-color: ${({ theme }) => theme.text_secondary + 50};
     margin: 10px 0px;
-  `;
+`;
 
-  const Close = styled.div`
+const Close = styled.div`
     display: none;
     @media (max-width: 1100px){
         display:block;
     }
     cursor: pointer;
-  `;
-
+`;
 
 const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUserlogged }) => {
-  const history = useNavigate();
-  
+  const navigate = useNavigate();
+
   const menuItems = [
     {
       link: "/dashboard",
@@ -113,7 +112,7 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
     {
       fun: () => {
         setMenuOpen(false);
-        history("/upload-audio")
+        navigate("/upload-audio");
       },
       name: "Upload",
       icon: <CloudUploadRounded />
@@ -128,8 +127,7 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
         setMenuOpen(false);
         logout();
         setUserlogged(false);
-        history("/login")
-        return 
+        navigate("/login");
       },
       name: "Logout",
       icon: <LogoutRounded />

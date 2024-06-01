@@ -4,7 +4,7 @@ import axios from 'axios';
 import "../css/uploadPodcast.css";
 import Cookies from "js-cookie";
 
-const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
+const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const responseData = location.state?.responseData;
@@ -28,6 +28,7 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
     e.preventDefault();
     if(!Cookies.get("token")){
       logout()
+      setMenuOpened(false);
       setUserlogged(false);
       navigate("/login");
       return;
@@ -64,6 +65,7 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
     event.preventDefault();
     if(!Cookies.get("token")){
       logout()
+      setMenuOpened(false);
       setUserlogged(false);
       navigate("/login");
       return;
@@ -106,6 +108,7 @@ const UploadPodcast = ({ darkMode, logout, setUserlogged }) => {
       setLoader(true);
       if(!Cookies.get("token")){
         logout()
+        setMenuOpened(false);
         setUserlogged(false);
         navigate("/login");
         return;

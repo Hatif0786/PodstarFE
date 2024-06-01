@@ -3,7 +3,7 @@ import styled, { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./utils/Themes";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
-import { BrowserRouter, Routes, Navigate, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from "./pages/Dashboard";
 import Search from "./pages/Search";
 import Favourite from "./pages/Favourite";
@@ -14,7 +14,6 @@ import Register from "./pages/Register";
 import useAuth from './utils/useAuth';
 import Homepage from "./pages/Homepage";
 
-// Define styled components outside of the App function
 const Container = styled.div`
   display: flex;
   overflow-x: hidden;
@@ -50,7 +49,10 @@ function App() {
   useEffect(() => {
     checkAuth();
     setUserlogged(isAuthenticated);
-  }, [isAuthenticated]);
+    if (!isAuthenticated) {
+      setMenuOpen(false);  // Close the sidebar if not authenticated
+    }
+  }, [isAuthenticated, checkAuth]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -58,9 +60,9 @@ function App() {
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <BrowserRouter>
-        <Container menuOpen={menuOpen}>
-          {menuOpen && <Sidebar setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} logout={logout} setUserlogged={setUserlogged} />}
+      <Router>
+        <Container>
+          {menuOpen && <Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} logout={logout} setUserlogged={setUserlogged} />}
           <Frame>
             <Navbar
               userlogged={userlogged}
@@ -75,26 +77,21 @@ function App() {
               <Route path="/" element={<Homepage />} />
               <Route path="/login" element={<Login darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
               <Route path="/signup" element={<Register darkMode={darkMode} />} />
-              <Route
-                path="*"
-                element={
-                  isAuthenticated ? (
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard logout={logout} setUserlogged={setUserlogged}/>} />
-                      <Route path="/upload-podcast" element={<UploadPodcast logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} />} />
-                      <Route path="/search" element={<Search />} />
-                      <Route path="/favourite" element={<Favourite />} />
-                      <Route path="/upload-audio" element={<UploadPodcastAudio logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} />} />
-                    </Routes>
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                }
-              />
+              {isAuthenticated ? (
+                <>
+                  <Route path="/dashboard" element={<Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} />} />
+                  <Route path="/upload-podcast" element={<UploadPodcast setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/favourite" element={<Favourite />} />
+                  <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} />} />
+                </>
+              ) : (
+                <Route path="*" element={<Navigate to="/login" />} />
+              )}
             </Routes>
           </Frame>
         </Container>
-      </BrowserRouter>
+      </Router>
     </ThemeProvider>
   );
 }

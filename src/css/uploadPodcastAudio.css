@@ -1,9 +1,12 @@
+/* General styles */
 .file-upload-form {
   width: fit-content;
   height: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  margin: auto;
 }
 .file-upload-label input {
   display: none;
@@ -19,6 +22,7 @@
   border-radius: 40px;
   border: 2px dashed #be1adb;
   box-shadow: 0px 0px 200px -50px rgba(0, 0, 0, 0.719);
+  text-align: center;
 }
 .file-upload-design {
   display: flex;
@@ -37,8 +41,6 @@
 .browse-button:hover {
   background-color: rgb(14, 14, 14);
 }
-
-
 .button {
   width: 50px;
   height: 50px;
@@ -54,18 +56,15 @@
   transition-duration: 0.3s;
   overflow: hidden;
   position: relative;
-  margin-left: 860px;
+  margin: auto;
 }
-
 .svgIcon {
   width: 12px;
   transition-duration: 0.3s;
 }
-
 .svgIcon path {
   fill: #be1adb;
 }
-
 .button:hover {
   width: 140px;
   border-radius: 50px;
@@ -73,33 +72,24 @@
   color: #be1adb;
   border-color: #be1adb;
   align-items: center;
-  margin-left: 820px;
 }
-
 .button:hover .svgIcon {
-  /* width: 20px; */
   transition-duration: 0.3s;
   transform: translateY(-200%);
 }
-
 .button::before {
   position: absolute;
   bottom: -20px;
   content: "Upload to Podstar";
   color: #be1adb;
-  /* transition-duration: .3s; */
   font-size: 0px;
 }
-
 .button:hover::before {
   font-size: 13px;
   opacity: 1;
   bottom: unset;
-  /* transform: translateY(-30px); */
   transition-duration: 0.3s;
 }
-
-
 .dots-container {
   display: flex;
   align-items: center;
@@ -107,7 +97,6 @@
   height: 100%;
   width: 100%;
 }
-
 .dot {
   height: 20px;
   width: 20px;
@@ -116,39 +105,51 @@
   background-color: #be1adb;
   animation: pulse 1.5s infinite ease-in-out;
 }
-
 .dot:last-child {
   margin-right: 0;
 }
-
 .dot:nth-child(1) {
   animation-delay: -0.3s;
 }
-
 .dot:nth-child(2) {
   animation-delay: -0.1s;
 }
-
 .dot:nth-child(3) {
   animation-delay: 0.1s;
 }
-
 @keyframes pulse {
   0% {
     transform: scale(0.8);
     background-color: #db71ee;
     box-shadow: 0 0 0 0 #e9b3f3;
   }
-
   50% {
     transform: scale(1.2);
     background-color: #e79bf4;
     box-shadow: 0 0 0 10px rgba(178, 212, 252, 0);
   }
-
   100% {
     transform: scale(0.8);
     background-color: #e5abef;
     box-shadow: 0 0 0 0 #e9b3f3;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .file-upload-label {
+    padding: 20px 50px;
+  }
+  .button {
+    margin: 20px auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .file-upload-label {
+    padding: 15px 40px;
+  }
+  .browse-button {
+    padding: 5px 10px;
   }
 }

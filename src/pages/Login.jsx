@@ -40,7 +40,7 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
       }catch (error) {
         if (error.response && error.response.status === 409) {
           setLoader(false);
-          setErr(error.response.data);
+          setErr("Bad Credentials, Try Again!!");
         }
       }
   }
