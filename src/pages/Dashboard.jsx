@@ -34,12 +34,22 @@ const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) =
           }
         );
         const categories = response.data;
-        setCategories(categories);
+        const shuffledCategories = shuffleCategories(categories);
+        setCategories(shuffledCategories);
         await fetchCategoryData(categories);
       } catch (error) {
         console.error(error);
         setLoader(false);
       }
+    };
+
+    const shuffleCategories = (array) => {
+      const arr = [...array]; // Clone the array to avoid modifying the original
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
+        [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+      }
+      return arr;
     };
 
     const fetchCategoryData = async (categories) => {
@@ -257,4 +267,4 @@ const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) =
   );
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);
