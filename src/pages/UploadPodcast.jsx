@@ -4,7 +4,7 @@ import axios from 'axios';
 import "../css/uploadPodcast.css";
 import Cookies from "js-cookie";
 
-const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
+const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged, setPlayerVisible }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const responseData = location.state?.responseData;
@@ -28,6 +28,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
     e.preventDefault();
     if(!Cookies.get("token")){
       logout()
+      setPlayerVisible(false);
       setMenuOpened(false);
       setUserlogged(false);
       navigate("/login");
@@ -41,7 +42,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/album/add/podcastDetails/${responseData.id}`,
+        `https://podstar-1.onrender.com/api/album/add/podcastDetails/${responseData.id}`,
         albumDetails,
         {
           headers: {
@@ -65,6 +66,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
     event.preventDefault();
     if(!Cookies.get("token")){
       logout()
+      setPlayerVisible(false);
       setMenuOpened(false);
       setUserlogged(false);
       navigate("/login");
@@ -80,7 +82,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
 
     try {
       const resp = await axios.post(
-        `http://localhost:5000/api/album/upload-thumbnail/${responseData.id}`,
+        `https://podstar-1.onrender.com/api/album/upload-thumbnail/${responseData.id}`,
         formData,
         {
           headers: {
@@ -108,6 +110,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
       setLoader(true);
       if(!Cookies.get("token")){
         logout()
+        setPlayerVisible(false);
         setMenuOpened(false);
         setUserlogged(false);
         navigate("/login");
@@ -115,7 +118,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged }) => {
       }
       try {
         const response = await axios.get(
-          'http://localhost:5000/api/album/categories',
+          'https://podstar-1.onrender.com/api/album/categories',
           {
             headers: {
               Authorization: `Bearer ${Cookies.get("token")}`,

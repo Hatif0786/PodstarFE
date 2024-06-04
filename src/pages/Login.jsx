@@ -22,7 +22,7 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
       "password":password
     };
     try{
-        const resp = await axios.post('http://localhost:5000/api/user/signin', user);
+        const resp = await axios.post('https://podstar-1.onrender.com/api/user/signin', user);
         setLoader(false);
         if (resp.status === 200 && resp.data.user.role==="ADMIN") {
           //localStorage.setItem("user", JSON.stringify(resp.data.user));

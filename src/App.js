@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, createContext } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./utils/Themes";
 import Sidebar from "./components/Sidebar";
@@ -13,6 +13,11 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import useAuth from './utils/useAuth';
 import Homepage from "./pages/Homepage";
+import ReactJkMusicPlayer from "react-jinke-music-player";
+import "react-jinke-music-player/assets/index.css";
+
+// Create a context to share the music player state
+export const MusicPlayerContext = createContext();
 
 const Container = styled.div`
   display: flex;
@@ -37,6 +42,10 @@ function App() {
   const { isAuthenticated, loading, checkAuth, logout } = useAuth();
   const [userlogged, setUserlogged] = useState(isAuthenticated);
 
+  const [audioLists, setAudioLists] = useState([]);
+  const [isPlayerVisible, setPlayerVisible] = useState(false);
+  const playerRef = useRef(null);
+
   const toggleMenu = () => {
     setMenuOpen(prevMenuOpen => !prevMenuOpen);
     setMenuOpened(prevMenuOpened => !prevMenuOpened);
@@ -58,41 +67,71 @@ function App() {
     return <div>Loading...</div>;
   }
 
+  const handlePlay = (item) => {
+    const newAudioLists = [
+      { name: item.name, musicSrc: item.albumUrl, cover: item.thumbnailUrl },
+    ];
+    setAudioLists(newAudioLists);
+    setPlayerVisible(true);
+    if (playerRef.current) {
+      playerRef.current.playByIndex(0);
+    }
+  };
+
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <Router>
-        <Container>
-          {menuOpen && <Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} logout={logout} setUserlogged={setUserlogged} />}
-          <Frame>
-            <Navbar
-              userlogged={userlogged}
-              menuOpened={menuOpened}
-              setUserlogged={setUserlogged}
-              toggleMenu={toggleMenu}
-              setDarkMode={toggleDarkMode}
-              darkMode={darkMode}
-              logout={logout}
-            />
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/login" element={<Login darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
-              <Route path="/signup" element={<Register darkMode={darkMode} />} />
-              {isAuthenticated ? (
-                <>
-                  <Route path="/dashboard" element={<Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} />} />
-                  <Route path="/upload-podcast" element={<UploadPodcast setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} />} />
-                  <Route path="/search" element={<Search />} />
-                  <Route path="/favourite" element={<Favourite />} />
-                  <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} />} />
-                </>
-              ) : (
-                <Route path="*" element={<Navigate to="/login" />} />
-              )}
-            </Routes>
-          </Frame>
-        </Container>
-      </Router>
-    </ThemeProvider>
+    <MusicPlayerContext.Provider value={{ handlePlay }}>
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <Router>
+          <Container>
+            {menuOpen && <Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/>}
+            <Frame>
+              <Navbar
+                userlogged={userlogged}
+                menuOpened={menuOpened}
+                setUserlogged={setUserlogged}
+                toggleMenu={toggleMenu}
+                setDarkMode={toggleDarkMode}
+                darkMode={darkMode}
+                logout={logout}
+              />
+              <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/login" element={<Login darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
+                <Route path="/signup" element={<Register darkMode={darkMode} />} />
+                {isAuthenticated ? (
+                  <>
+                    <Route path="/dashboard" element={<Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="/upload-podcast" element={<UploadPodcast setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="/search" element={<Search setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="/favourite" element={<Favourite setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/>} />
+                  </>
+                ) : (
+                  <Route path="*" element={<Navigate to="/login" />} />
+                )}
+              </Routes>
+            </Frame>
+          </Container>
+        </Router>
+        {isPlayerVisible && (
+          <ReactJkMusicPlayer
+            audioLists={audioLists}
+            showMediaSession
+            autoPlay={true}
+            mode="full"
+            showDownload={false}
+            glassBg={true}
+            showReload={false}
+            showThemeSwitch={false}
+            responsive={false}
+            clearPriorAudioLists={true}
+            getAudioInstance={(instance) => {
+              playerRef.current = instance;
+            }}
+          />
+        )}
+      </ThemeProvider>
+    </MusicPlayerContext.Provider>
   );
 }
 

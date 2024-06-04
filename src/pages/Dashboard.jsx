@@ -1,26 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
 import "../css/uploadPodcast.css";
 import Cookies from "js-cookie";
 import "../css/Dashboard.css";
 import { useNavigate } from "react-router-dom";
-import ReactJkMusicPlayer from "react-jinke-music-player";
-import "react-jinke-music-player/assets/index.css";
+import { MusicPlayerContext } from "../App"; // Import the context
 
-const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
+const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) => {
   const [loader, setLoader] = useState(true);
   const [categories, setCategories] = useState([]);
   const [categoryData, setCategoryData] = useState({});
-  const [audioLists, setAudioLists] = useState([]);
-  const [isPlayerVisible, setPlayerVisible] = useState(false);
-  const playerRef = useRef(null);
   const navigate = useNavigate();
+  const { handlePlay } = useContext(MusicPlayerContext); // Use the context
 
   useEffect(() => {
     const fetchCategories = async () => {
       setLoader(true);
       if (!Cookies.get("token")) {
         logout();
+        setPlayerVisible(false);
         setMenuOpened(false);
         setUserlogged(false);
         navigate("/login");
@@ -28,7 +26,7 @@ const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
       }
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/album/categories",
+          "https://podstar-1.onrender.com/api/album/categories",
           {
             headers: {
               Authorization: `Bearer ${Cookies.get("token")}`,
@@ -47,6 +45,7 @@ const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
     const fetchCategoryData = async (categories) => {
       if (!Cookies.get("token")) {
         logout();
+        setPlayerVisible(false);
         setMenuOpened(false);
         setUserlogged(false);
         navigate("/login");
@@ -55,7 +54,7 @@ const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
       try {
         const categoryDataPromises = categories.map(async (category) => {
           const response = await axios.get(
-            `http://localhost:5000/api/album/${category}`,
+            `https://podstar-1.onrender.com/api/album/${category}`,
             {
               headers: {
                 Authorization: `Bearer ${Cookies.get("token")}`,
@@ -110,26 +109,20 @@ const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
     }
   };
 
-  useEffect(() => {
-    if (playerRef.current) {
-      playerRef.current.playByIndex(0); // Assuming you always want to play the first song in the list
-    }
-  }, []);
-
-  const handleCardClick = (item) => {
+  const handleCardClick = useCallback((item) => {
     if (!Cookies.get("token")) {
       logout();
+      setPlayerVisible(false);
       setMenuOpened(false);
       setUserlogged(false);
       navigate("/login");
       return;
     }
-    const newAudioLists = [
-      { name: item.name, musicSrc: item.albumUrl, cover: item.thumbnailUrl },
-    ];
-    setAudioLists(newAudioLists);
-    setPlayerVisible(true);
-  };
+    handlePlay(item);
+  }, [logout, setMenuOpened, setUserlogged, navigate, handlePlay]);
+  
+  
+
 
   return (
     <>
@@ -156,7 +149,8 @@ const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
                   <h1
                     style={{
                       marginLeft: "3%",
-                      marginTop: "3%",
+                      marginTop: "2.5%",
+                      marginBottom:"2.5%",
                       fontSize: "25px",
                     }}
                   >
@@ -164,14 +158,14 @@ const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
                   </h1>
                   <div className="container-fluid text-center">
                     <div
-                      className="row"
-                      style={{ marginTop: "7%", marginLeft: "3%" }}
+                      className="row" id="row"
+                      style={{ marginTop: "2.5%", marginLeft: "0.2%" }}
                     >
                       {categoryData[category].map((item, index) => (
                         <div key={index} className="col-sm-3">
                           <div
                             className="card"
-                            style={{ marginLeft: "20px", marginBottom: "20px" }}
+                            style={{ marginLeft: "20px", marginRight:"20px", marginBottom: "20px" }}
                             onClick={() => handleCardClick(item)}
                           >
                             <div
@@ -258,23 +252,6 @@ const Dashboard = ({setMenuOpened, logout, setUserlogged }) => {
               )
           )}
         </div>
-      )}
-      {isPlayerVisible && (
-        <ReactJkMusicPlayer
-          audioLists={audioLists}
-          showMediaSession
-          autoPlay={true}
-          mode="full"
-          showDownload={false}
-          glassBg={true}
-          showReload={false}
-          showThemeSwitch={false}
-          responsive={false}
-          clearPriorAudioLists={true}
-          getAudioInstance={(instance) => {
-            playerRef.current = instance;
-          }}
-        />
       )}
     </>
   );

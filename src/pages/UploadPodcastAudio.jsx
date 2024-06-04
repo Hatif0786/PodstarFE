@@ -4,7 +4,7 @@ import "../css/uploadPodcastAudio.css";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
-const UploadPodcastAudio = ({ setMenuOpened, menuOpened, setUserlogged, logout }) => {
+const UploadPodcastAudio = ({ setMenuOpened, menuOpened, setUserlogged, logout, setPlayerVisible }) => {
   const [file, setFile] = useState("");
   const [loader, setLoader] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -21,6 +21,7 @@ const UploadPodcastAudio = ({ setMenuOpened, menuOpened, setUserlogged, logout }
     setLoader(true);
     if (!Cookies.get("token")) {
       logout();
+      setPlayerVisible(false);
       setMenuOpened(false);
       setUserlogged(false);
       navigate("/login");
@@ -29,7 +30,7 @@ const UploadPodcastAudio = ({ setMenuOpened, menuOpened, setUserlogged, logout }
     const formData = new FormData();
     formData.append("album", file);
     try {
-      const resp = await axios.post("http://localhost:5000/api/album/upload", formData, {
+      const resp = await axios.post("https://podstar-1.onrender.com/api/album/upload", formData, {
         headers: {
           "Authorization": `Bearer ${Cookies.get("token")}`,
           "Content-Type": "multipart/form-data",

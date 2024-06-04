@@ -87,7 +87,7 @@ const Close = styled.div`
     cursor: pointer;
 `;
 
-const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUserlogged }) => {
+const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUserlogged, setPlayerVisible }) => {
   const navigate = useNavigate();
 
   const menuItems = [
@@ -125,6 +125,7 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
     {
       fun: () => {
         setMenuOpen(false);
+        setPlayerVisible(false);
         logout();
         setUserlogged(false);
         navigate("/login");

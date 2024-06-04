@@ -32,7 +32,7 @@ const Register = ({darkMode}) => {
       "confirmPassword":confirmPassword
     };
     try{
-        await axios.post('http://localhost:5000/api/user/add', user);
+        await axios.post('https://podstar-1.onrender.com/api/user/add', user);
         setLoader(false);
         navigate("/login");
       }catch (error) {
