@@ -12,7 +12,7 @@ const Search = ({ setPlayerVisible, logout, setUserlogged, setMenuOpened, darkMo
   const { handlePlay } = useContext(MusicPlayerContext);
 
   // Function to fetch search results
-  const fetchSearchResults = async (searchQuery) => {
+  const fetchSearchResults = useCallback(async (searchQuery) => {
     if (!Cookies.get("token")) {
       logout();
       setPlayerVisible(false);
@@ -44,7 +44,7 @@ const Search = ({ setPlayerVisible, logout, setUserlogged, setMenuOpened, darkMo
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
-  };
+  }, [logout, setPlayerVisible, setMenuOpened, setUserlogged, navigate]);
 
   // UseEffect to handle the search on query change
   useEffect(() => {
@@ -53,7 +53,7 @@ const Search = ({ setPlayerVisible, logout, setUserlogged, setMenuOpened, darkMo
     }, 500); // Adding a delay to debounce the search input
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query]);
+  }, [query, fetchSearchResults]);
 
   const getAudioDuration = (url) => {
     return new Promise((resolve) => {
@@ -87,7 +87,7 @@ const Search = ({ setPlayerVisible, logout, setUserlogged, setMenuOpened, darkMo
       return;
     }
     handlePlay(item);
-  }, [logout, setMenuOpened, setUserlogged, navigate, handlePlay]);
+  }, [logout, setMenuOpened,setPlayerVisible, setUserlogged, navigate, handlePlay]);
 
   return (
     <div id="content"

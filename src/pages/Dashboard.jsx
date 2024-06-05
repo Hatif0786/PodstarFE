@@ -95,7 +95,7 @@ const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) =
     };
 
     fetchCategories();
-  }, [logout, navigate, setUserlogged]);
+  }, [logout, navigate, setUserlogged, setMenuOpened, setPlayerVisible]);
 
   const getAudioDuration = (url) => {
     return new Promise((resolve) => {
@@ -129,7 +129,7 @@ const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) =
       return;
     }
     handlePlay(item);
-  }, [logout, setMenuOpened, setUserlogged, navigate, handlePlay]);
+  }, [logout, setMenuOpened, setUserlogged, navigate, handlePlay, setPlayerVisible]);
   
   
 

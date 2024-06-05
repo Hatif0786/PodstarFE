@@ -134,7 +134,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged, setPlaye
     };
 
     fetchCategories();
-  }, []);
+  }, [logout, navigate, setMenuOpened, setUserlogged, setPlayerVisible]);
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
