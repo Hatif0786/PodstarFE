@@ -38,7 +38,7 @@ const Logo = styled.div`
   gap: 6px;
   font-size: 35px;
   margin: 16px px;
-  padding-left: 10px;
+  padding-left: 5px;
 `;
 
 const ButtonDiv = styled.div`

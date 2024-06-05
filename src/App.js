@@ -102,7 +102,7 @@ function App() {
                   <>
                     <Route path="/dashboard" element={<Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/>} />
                     <Route path="/upload-podcast" element={<UploadPodcast setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} setPlayerVisible={setPlayerVisible}/>} />
-                    <Route path="/search" element={<Search setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="/search" element={<Search setPlayerVisible={setPlayerVisible} logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened} darkMode={darkMode}/>} />
                     <Route path="/favourite" element={<Favourite setPlayerVisible={setPlayerVisible}/>} />
                     <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/>} />
                   </>

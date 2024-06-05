@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeRounded, CloseRounded, SearchRounded, FavoriteRounded, LightModeRounded, LogoutRounded, DarkModeRounded, CloudUploadRounded } from "@mui/icons-material";
+import { HomeRounded, CloseRounded, SearchRounded, FavoriteRounded, LightModeRounded, LogoutRounded, DarkModeRounded, CloudUploadRounded, ManageAccountsRounded} from "@mui/icons-material";
 import styled from 'styled-components';
 import logo from "../Images/Logo.png";
 import { Link } from 'react-router-dom';
@@ -28,7 +28,6 @@ const Logo = styled.div`
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-weight: bold;
     font-size: 20px;
     margin: 16px 0px;
     padding-left: 50px;
@@ -44,6 +43,14 @@ const Flex = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 0px 12px;
+`;
+
+const LogoText = styled.div`
+  margin-top:10px;
+  font-family: "Sacramento", cursive;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 35px;
 `;
 
 const Elements = styled.div`
@@ -114,8 +121,16 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
         setMenuOpen(false);
         navigate("/upload-audio");
       },
-      name: "Upload",
+      name: "Upload Podcast",
       icon: <CloudUploadRounded />
+    },
+    {
+      fun: () => {
+        setMenuOpen(false);
+        navigate("/user-mgmt")
+      },
+      name: "User Management",
+      icon: <ManageAccountsRounded/>
     },
     {
       fun: () => setDarkMode(!darkMode),
@@ -140,7 +155,9 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
       <Flex>
         <Logo>
           <Image src={logo} alt="logo" />
+          <LogoText>
           Podstar
+          </LogoText>
         </Logo>
         <Close onClick={() => setMenuOpen(false)}>
           <CloseRounded />
