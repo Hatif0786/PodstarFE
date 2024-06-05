@@ -95,7 +95,7 @@ function App() {
                 logout={logout}
               />
               <Routes>
-                <Route path="/" element={<Homepage />} />
+              <Route path="/" element={isAuthenticated ? <Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/> : <Homepage />} />
                 <Route path="/login" element={<Login darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
                 <Route path="/signup" element={<Register darkMode={darkMode} />} />
                 {isAuthenticated ? (
