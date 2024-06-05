@@ -30,7 +30,7 @@ const Logo = styled.div`
     gap: 6px;
     font-size: 20px;
     margin: 16px 0px;
-    padding-left: 50px;
+    padding-left: 25px;
 `;
 
 const Image = styled.img`
