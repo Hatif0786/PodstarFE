@@ -1,19 +1,54 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback, memo } from "react";
 import axios from "axios";
 import "../css/uploadPodcast.css";
 import Cookies from "js-cookie";
 import "../css/Dashboard.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MusicPlayerContext } from "../App"; // Import the context
 
-const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) => {
+const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) => {
   const [loader, setLoader] = useState(true);
   const [categories, setCategories] = useState([]);
   const [categoryData, setCategoryData] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
   const { handlePlay } = useContext(MusicPlayerContext); // Use the context
 
+
+  const shuffleCategories = (array) => {
+    const arr = [...array]; // Clone the array to avoid modifying the original
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
+      [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+    }
+    return arr;
+  };
+
+
+  const getAudioDuration = (url) => {
+    return new Promise((resolve) => {
+      const audio = new Audio(url);
+      audio.addEventListener("loadedmetadata", () => {
+        resolve(audio.duration);
+      });
+    });
+  };
+
+  const formatDuration = (duration) => {
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const seconds = Math.floor(duration % 60);
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+    } else {
+      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    }
+  };
+
   useEffect(() => {
+
     const fetchCategories = async () => {
       setLoader(true);
       if (!Cookies.get("token")) {
@@ -42,15 +77,7 @@ const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) =
         setLoader(false);
       }
     };
-
-    const shuffleCategories = (array) => {
-      const arr = [...array]; // Clone the array to avoid modifying the original
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
-        [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
-      }
-      return arr;
-    };
+    
 
     const fetchCategoryData = async (categories) => {
       if (!Cookies.get("token")) {
@@ -94,30 +121,12 @@ const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) =
       }
     };
 
-    fetchCategories();
-  }, [logout, navigate, setUserlogged, setMenuOpened, setPlayerVisible]);
-
-  const getAudioDuration = (url) => {
-    return new Promise((resolve) => {
-      const audio = new Audio(url);
-      audio.addEventListener("loadedmetadata", () => {
-        resolve(audio.duration);
-      });
-    });
-  };
-
-  const formatDuration = (duration) => {
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.floor((duration % 3600) / 60);
-    const seconds = Math.floor(duration % 60);
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-        .toString()
-        .padStart(2, "0")}`;
-    } else {
-      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    if(location.pathname === "/dashboard" || location.pathname === "/"){
+      fetchCategories();
     }
-  };
+  }, [logout, location.pathname, navigate, setUserlogged, setMenuOpened, setPlayerVisible]);
+
+  
 
   const handleCardClick = useCallback((item) => {
     if (!Cookies.get("token")) {
@@ -265,6 +274,6 @@ const Dashboard = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) =
       )}
     </>
   );
-};
+});
 
 export default React.memo(Dashboard);

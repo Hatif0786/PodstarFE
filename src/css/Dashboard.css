@@ -21,7 +21,7 @@ scrollbar-width: none;  /* Firefox */
 
 .card {
     --rounded: 20px;
-    --size: 270px;
+    --size: 220px;
     width: var(--size);
     height: calc(var(--size) - 10px);
     border-radius: var(--rounded);

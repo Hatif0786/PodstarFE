@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createContext } from "react";
+import React, { useState, useEffect, useRef, createContext, useCallback, useMemo } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./utils/Themes";
 import Sidebar from "./components/Sidebar";
@@ -15,6 +15,7 @@ import useAuth from './utils/useAuth';
 import Homepage from "./pages/Homepage";
 import ReactJkMusicPlayer from "react-jinke-music-player";
 import "react-jinke-music-player/assets/index.css";
+import CookieConsent from "./utils/CookiesConsent";
 
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
@@ -46,6 +47,19 @@ function App() {
   const [isPlayerVisible, setPlayerVisible] = useState(false);
   const playerRef = useRef(null);
 
+  const handlePlay = useCallback((item) => {
+    const newAudioLists = [
+      { name: item.name, musicSrc: item.albumUrl, cover: item.thumbnailUrl },
+    ];
+    setAudioLists(newAudioLists);
+    setPlayerVisible(true);
+    if (playerRef.current) {
+      playerRef.current.playByIndex(0);
+    }
+  }, []);
+
+  const musicPlayerContextValue = useMemo(() => ({ handlePlay }), [handlePlay]);
+
   const toggleMenu = () => {
     setMenuOpen(prevMenuOpen => !prevMenuOpen);
     setMenuOpened(prevMenuOpened => !prevMenuOpened);
@@ -67,19 +81,9 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  const handlePlay = (item) => {
-    const newAudioLists = [
-      { name: item.name, musicSrc: item.albumUrl, cover: item.thumbnailUrl },
-    ];
-    setAudioLists(newAudioLists);
-    setPlayerVisible(true);
-    if (playerRef.current) {
-      playerRef.current.playByIndex(0);
-    }
-  };
-
+  
   return (
-    <MusicPlayerContext.Provider value={{ handlePlay }}>
+    <MusicPlayerContext.Provider value={musicPlayerContextValue}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <Router>
           <Container>
@@ -130,6 +134,7 @@ function App() {
             }}
           />
         )}
+        <CookieConsent />
       </ThemeProvider>
     </MusicPlayerContext.Provider>
   );

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import styled from 'styled-components';
 import { ArrowRightAltRounded, MenuRounded, PersonRounded } from "@mui/icons-material";
 import { IconButton } from '@mui/material';
@@ -70,14 +70,15 @@ const IcoButton = styled(IconButton)`
 
 const Navbar = ({ toggleMenu, setUserlogged, menuOpened, userlogged, setDarkMode, darkMode, logout }) => {
   const location = useLocation();
-  const toggle = () => {
+  const toggle = useCallback(() => {
     setDarkMode(!darkMode);
-  };
+  }, [darkMode, setDarkMode]);
 
-  const handleLogout = () => {
+  // Memoize the logout function
+  const handleLogout = useCallback(() => {
     logout();
     setUserlogged(false);
-  };
+  }, [logout, setUserlogged]);
 
   return (
     <NavbarDiv>

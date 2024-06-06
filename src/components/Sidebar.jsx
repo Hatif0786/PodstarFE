@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { HomeRounded, CloseRounded, SearchRounded, FavoriteRounded, LightModeRounded, LogoutRounded, DarkModeRounded, CloudUploadRounded, ManageAccountsRounded} from "@mui/icons-material";
 import styled from 'styled-components';
 import logo from "../Images/Logo.png";
@@ -97,6 +97,20 @@ const Close = styled.div`
 const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUserlogged, setPlayerVisible }) => {
   const navigate = useNavigate();
 
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode(!darkMode);
+  }, [darkMode, setDarkMode]);
+
+  // Memoize the logout function
+  const handleLogout = useCallback(() => {
+    setMenuOpen(false);
+    setPlayerVisible(false);
+    logout();
+    setUserlogged(false);
+    navigate("/login");
+  }, [setMenuOpen, setPlayerVisible, logout, setUserlogged, navigate]);
+
+
   const menuItems = [
     {
       link: "/dashboard",
@@ -133,18 +147,12 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
       icon: <ManageAccountsRounded/>
     },
     {
-      fun: () => setDarkMode(!darkMode),
+      fun: toggleDarkMode,
       name: darkMode ? "Light Mode" : "Dark Mode",
       icon: darkMode ? <LightModeRounded /> : <DarkModeRounded />
     },
     {
-      fun: () => {
-        setMenuOpen(false);
-        setPlayerVisible(false);
-        logout();
-        setUserlogged(false);
-        navigate("/login");
-      },
+      fun: handleLogout,
       name: "Logout",
       icon: <LogoutRounded />
     }

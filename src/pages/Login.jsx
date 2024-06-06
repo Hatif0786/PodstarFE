@@ -12,6 +12,7 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
   const [loader, setLoader] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,6 +46,11 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
       }
   }
 
+  const handleShowPassword = () => {
+    setShowPassword(true);
+    setTimeout(() => setShowPassword(false), 200);
+  };
+
   return (
     <>
     {loader && (
@@ -62,15 +68,29 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
 
     {!loader && (
         <div style={{ height: "100vh", overflowY: "auto", paddingBottom: "20px" }}>
-          <div className="container text-center" style={{ marginTop: "70px", marginBottom: "30px"}}>
+          <div className="container text-center" style={{ marginTop: "45px", marginBottom: "30px"}}>
               <div style={{ textAlign: "center" }}>
                 <h1 className="heading" style={{ fontSize: "30px", margin: "10px 0", color: darkMode ? "#be1adb" : "black"}}><b>Sign In with Podstar</b></h1>
               </div>
               <div style={{ textAlign: "center" }}>
                 {err && 
-                  <div className="container" style={{ paddingLeft: "1.5%" }}>
-                    <h1 style={{ color: "red", margin: "25px" }}><b>{err}</b></h1>
+                  <div className="notifications-container" style={{
+                  margin: 'auto'}}>
+                  <div className="error-alert">
+                    <div className="flex" style={{paddingLeft:"35px"}}>
+                      <div className="flex-shrink-0">
+                        
+                        <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" className="error-svg">
+                          <path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" fill-rule="evenodd"></path>
+                        </svg>
+                      </div>
+                      <div className="error-prompt-container">
+                        <p className="error-prompt-heading text-center">{err}
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                </div>
                 }
               </div>
             </div>
@@ -115,12 +135,13 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
                   viewBox="-64 0 512 512"
                   width="20"
                   xmlns="http://www.w3.org/2000/svg"
+                  onClick={handleShowPassword} style={{ cursor: "pointer" }}
                 >
                   <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
                   <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
                 </svg>
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   className="input"
                   placeholder="Enter your Password"
                   value={password} 
@@ -130,6 +151,7 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
                   viewBox="0 0 576 512"
                   height="1em"
                   xmlns="http://www.w3.org/2000/svg"
+                  onClick={handleShowPassword} style={{ cursor: "pointer" }}
                 >
                   <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"></path>
                 </svg>
