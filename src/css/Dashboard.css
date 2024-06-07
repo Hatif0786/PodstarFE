@@ -239,23 +239,28 @@ scrollbar-width: none;  /* Firefox */
 
 /* For tablet screens (up to 768px) */
 @media (max-width: 768px) {
+  /* Adjusting the columns to be 50% wide on small screens */
   .col-sm-3 {
     flex: 0 0 50%;
     max-width: 50%;
   }
-  #content{
-    overflow-x:hidden;
+  
+  /* Hiding horizontal overflow for the content area */
+  #content {
+    overflow-x: hidden;
   }
 
-  #row{
+  /* Ensuring no left margin for the row */
+  #row {
     margin-left: 0 !important;
   }
 
-  .container-fluid{
+  /* Adjusting right margin for fluid containers */
+  .container-fluid {
     margin-right: 1%;
   }
-  
 }
+
 
 /* For mobile screens (up to 576px) */
 @media (max-width: 576px) {
