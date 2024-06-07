@@ -25,7 +25,7 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
     try{
         const resp = await axios.post('https://podstar-1.onrender.com/api/user/signin', user);
         setLoader(false);
-        if (resp.status === 200 && resp.data.user.role==="ADMIN") {
+        if ((resp.status === 200 && resp.data.user.role==="ADMIN") || (resp.status === 200 && resp.data.user.role==="NORMAL")) {
           //localStorage.setItem("user", JSON.stringify(resp.data.user));
           //localStorage.setItem("token", resp.data.token);
           Cookies.set("user", JSON.stringify(resp.data.user), {
