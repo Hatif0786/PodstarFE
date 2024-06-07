@@ -12,7 +12,7 @@
     position: relative;
     overflow: hidden;
     z-index:1001;
-    animation: slideUp 2.5s ease-in-out;
+    animation: slideUp 0.5s ease-in-out;
     box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.062);
   }
 
@@ -33,9 +33,9 @@
   }
   
   .cookieConsentOverlay.show {
-    opacity: 1;
+    opacity: 2;
     visibility: visible;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.792); /* Semi-transparent background */
   }
   
   #cookieSvg {
