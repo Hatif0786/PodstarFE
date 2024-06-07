@@ -16,6 +16,7 @@ import Homepage from "./pages/Homepage";
 import ReactJkMusicPlayer from "react-jinke-music-player";
 import "react-jinke-music-player/assets/index.css";
 import CookieConsent from "./utils/CookiesConsent";
+import Cookies from "js-cookie";
 
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
@@ -46,6 +47,8 @@ function App() {
   const [audioLists, setAudioLists] = useState([]);
   const [isPlayerVisible, setPlayerVisible] = useState(false);
   const playerRef = useRef(null);
+  const userCookie = Cookies.get('user');
+  const userRole = userCookie ? JSON.parse(userCookie).role : null;
 
   const handlePlay = useCallback((item) => {
     const newAudioLists = [
@@ -87,7 +90,7 @@ function App() {
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <Router>
           <Container>
-            {menuOpen && <Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/>}
+            {menuOpen && <Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} userRole={userRole}/>}
             <Frame>
               <Navbar
                 userlogged={userlogged}

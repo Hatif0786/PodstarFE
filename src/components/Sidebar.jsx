@@ -94,7 +94,7 @@ const Close = styled.div`
     cursor: pointer;
 `;
 
-const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUserlogged, setPlayerVisible }) => {
+const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUserlogged, setPlayerVisible, userRole }) => {
   const navigate = useNavigate();
 
   const toggleDarkMode = useCallback(() => {
@@ -136,7 +136,8 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
         navigate("/upload-audio");
       },
       name: "Upload Podcast",
-      icon: <CloudUploadRounded />
+      icon: <CloudUploadRounded />,
+      visible: userRole === "ADMIN" // Show only if user role is ADMIN
     },
     {
       fun: () => {
@@ -144,17 +145,20 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
         navigate("/user-mgmt")
       },
       name: "User Management",
-      icon: <ManageAccountsRounded/>
+      icon: <ManageAccountsRounded />,
+      visible: userRole === "ADMIN" // Show only if user role is ADMIN
     },
     {
       fun: toggleDarkMode,
       name: darkMode ? "Light Mode" : "Dark Mode",
-      icon: darkMode ? <LightModeRounded /> : <DarkModeRounded />
+      icon: darkMode ? <LightModeRounded /> : <DarkModeRounded />,
+      visible: true // Always visible
     },
     {
       fun: handleLogout,
       name: "Logout",
-      icon: <LogoutRounded />
+      icon: <LogoutRounded />,
+      visible: true // Always visible
     }
   ];
 
@@ -186,10 +190,12 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
       <HR />
 
       {button.map((item) => (
-        <Elements key={item.name} onClick={item.fun}>
-          {item.icon}
-          <NavText>{item.name}</NavText>
-        </Elements>
+        item.visible && (
+          <Elements key={item.name} onClick={item.fun}>
+            {item.icon}
+            <NavText>{item.name}</NavText>
+          </Elements>
+        )
       ))}
     </MenuContainer>
   );
