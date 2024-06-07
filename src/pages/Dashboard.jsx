@@ -178,7 +178,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                   <div className="container-fluid text-center">
                     <div
                       className="row" id="row"
-                      style={{ marginTop: "2.5%", marginLeft: "1.5%", marginRight:"2.3%" }}
+                      style={{ marginTop: "2.5%", marginLeft: "1.5%", marginRight:"2.8%" }}
                     >
                       {categoryData[category].map((item, index) => (
                         <div key={index} className="col-sm-3">
