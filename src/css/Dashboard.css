@@ -245,7 +245,10 @@ scrollbar-width: none;  /* Firefox */
   }
   #content{
     overflow-x:hidden;
+  }
 
+  #row{
+    margin-left: 0 !important;
   }
 
   .container-fluid{
