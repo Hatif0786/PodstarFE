@@ -262,6 +262,10 @@ scrollbar-width: none;  /* Firefox */
     margin-left: 18px;
   }
 
+  #row{
+    margin-left: 6.5% !important;
+  }
+
   
 }
 

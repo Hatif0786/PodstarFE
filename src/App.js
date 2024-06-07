@@ -128,6 +128,9 @@ function App() {
             showReload={false}
             showThemeSwitch={false}
             responsive={false}
+            spaceBar="true"
+            showPlayMode={false}
+            toggleMode={false}
             clearPriorAudioLists={true}
             getAudioInstance={(instance) => {
               playerRef.current = instance;
