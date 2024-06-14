@@ -106,14 +106,14 @@ const Navbar = ({ toggleMenu, setUserlogged, menuOpened, userlogged, setDarkMode
         </ButtonDiv>
       )}
 
-      {!userlogged && location.pathname !== '/login' && location.pathname !== '/signup' && (
+      {!userlogged && location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/forgot-password' && (
         <LetsGoButton as={Link} to="/login">
           Let's Go
           <ArrowRightAltRounded />
         </LetsGoButton>
       )}
 
-      {!userlogged && location.pathname !== '/signup' && location.pathname !== '/' && (
+      {!userlogged && location.pathname !== '/signup' && location.pathname !== '/' && location.pathname !== '/forgot-password' && (
         <ButtonDiv as={Link} to="/signup" style={{ display: "flex" }}>
           <PersonRounded />
           Register

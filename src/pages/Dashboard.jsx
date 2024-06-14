@@ -10,10 +10,10 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
   const [loader, setLoader] = useState(true);
   const [categories, setCategories] = useState([]);
   const [categoryData, setCategoryData] = useState({});
+  const [favouriteAlbum, setFavouriteAlbum] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { handlePlay } = useContext(MusicPlayerContext); // Use the context
-
 
   const shuffleCategories = (array) => {
     const arr = [...array]; // Clone the array to avoid modifying the original
@@ -23,7 +23,6 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     }
     return arr;
   };
-
 
   const getAudioDuration = (url) => {
     return new Promise((resolve) => {
@@ -48,7 +47,27 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
   };
 
   useEffect(() => {
-
+    const fetchUserFavorites = async () => {
+      if (!Cookies.get("token")) {
+        logout();
+        setPlayerVisible(false);
+        setMenuOpened(false);
+        setUserlogged(false);
+        navigate("/login");
+        return [];
+      }
+    
+      try {
+        const user = JSON.parse(Cookies.get('user'));
+        const favoriteAlbumArray = Array.isArray(user.favouriteAlbum) ? user.favouriteAlbum : [];
+        setFavouriteAlbum(favoriteAlbumArray);
+        return favoriteAlbumArray;
+      } catch (error) {
+        console.error('Error fetching user favorites:', error);
+        return [];
+      }
+    };
+    
     const fetchCategories = async () => {
       setLoader(true);
       if (!Cookies.get("token")) {
@@ -71,13 +90,12 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
         const categories = response.data;
         const shuffledCategories = shuffleCategories(categories);
         setCategories(shuffledCategories);
-        await fetchCategoryData(categories);
+        await fetchCategoryData(shuffledCategories);
       } catch (error) {
         console.error(error);
         setLoader(false);
       }
     };
-    
 
     const fetchCategoryData = async (categories) => {
       if (!Cookies.get("token")) {
@@ -89,6 +107,8 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
         return;
       }
       try {
+        const userFavourites = await fetchUserFavorites(); // Ensure user favorites are fetched first
+
         const categoryDataPromises = categories.map(async (category) => {
           const response = await axios.get(
             `https://podstar-1.onrender.com/api/album/${category}`,
@@ -101,7 +121,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
           const dataWithDurations = await Promise.all(
             response.data.map(async (item) => {
               const duration = await getAudioDuration(item.albumUrl);
-              return { ...item, duration };
+              return { ...item, duration, isFavorite: userFavourites.includes(item.id) };
             })
           );
           return { category, data: dataWithDurations };
@@ -121,12 +141,10 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       }
     };
 
-    if(location.pathname === "/dashboard" || location.pathname === "/"){
+    if (location.pathname === "/dashboard" || location.pathname === "/") {
       fetchCategories();
     }
   }, [logout, location.pathname, navigate, setUserlogged, setMenuOpened, setPlayerVisible]);
-
-  
 
   const handleCardClick = useCallback((item) => {
     if (!Cookies.get("token")) {
@@ -137,11 +155,100 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       navigate("/login");
       return;
     }
+    addToRecentlyPlayed(item);
     handlePlay(item);
   }, [logout, setMenuOpened, setUserlogged, navigate, handlePlay, setPlayerVisible]);
-  
-  
 
+  const addToRecentlyPlayed = async (item) => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+    try{
+      await axios.post(
+        `https://podstar-1.onrender.com/api/user/recently-played?id=${item.id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  const handleFavoriteClick = async (category, index) => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+  
+    try {
+      const item = categoryData[category][index];
+      const response = await axios.get(`https://podstar-1.onrender.com/api/user/add-favourite?id=${item.id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      const data = response.data;
+      if (response.status === 200 && data === "Album added to favourites!") {
+        const updatedCategoryData = { ...categoryData };
+        updatedCategoryData[category][index].isFavorite = true;
+        setCategoryData(updatedCategoryData);
+  
+        const updatedFavouriteAlbum = [...favouriteAlbum, item.id];
+        setFavouriteAlbum(updatedFavouriteAlbum);
+        Cookies.set("user", JSON.stringify({ ...JSON.parse(Cookies.get("user")), favouriteAlbum: updatedFavouriteAlbum }));
+      }
+    } catch (error) {
+      console.error('Error adding to favourites:', error);
+    }
+  };
+  
+  const handleFilledFavoriteClick = async (category, index) => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+  
+    try {
+      const item = categoryData[category][index];
+      const response = await axios.delete(`https://podstar-1.onrender.com/api/user/remove-favourite?id=${item.id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      const data = response.data;
+      if (response.status === 200 && data === "Album removed from favourites!") {
+        const updatedCategoryData = { ...categoryData };
+        updatedCategoryData[category][index].isFavorite = false;
+        setCategoryData(updatedCategoryData);
+  
+        const updatedFavouriteAlbum = favouriteAlbum.filter(id => id !== item.id);
+        setFavouriteAlbum(updatedFavouriteAlbum);
+        Cookies.set("user", JSON.stringify({ ...JSON.parse(Cookies.get("user")), favouriteAlbum: updatedFavouriteAlbum }));
+      }
+    } catch (error) {
+      console.error('Error removing from favourites:', error);
+    }
+  };
+  
+  
+  
 
   return (
     <>
@@ -169,7 +276,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                     style={{
                       marginLeft: "3%",
                       marginTop: "2.5%",
-                      marginBottom:"2.5%",
+                      marginBottom: "2.5%",
                       fontSize: "25px",
                     }}
                   >
@@ -178,13 +285,13 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                   <div className="container-fluid text-center">
                     <div
                       className="row" id="row"
-                      style={{ marginTop: "2.5%", marginLeft: "1.5%", marginRight:"2.8%" }}
+                      style={{ marginTop: "2.5%", marginLeft: "1.5%", marginRight: "2.8%" }}
                     >
                       {categoryData[category].map((item, index) => (
                         <div key={index} className="col-sm-3">
                           <div
                             className="card"
-                            style={{ marginLeft: "20px", marginRight:"20px", marginBottom: "20px" }}
+                            style={{ marginLeft: "20px", marginRight: "20px", marginBottom: "20px" }}
                             onClick={() => handleCardClick(item)}
                           >
                             <div
@@ -193,6 +300,47 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                                 backgroundImage: `url(${item.thumbnailUrl})`,
                               }}
                             >
+                              <div className="card__favorite__icon__wrapper" onClick={(e) => e.stopPropagation()}>
+                                {!item.isFavorite ? (
+                                  <div className="card__favorite__icon" onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleFavoriteClick(category, index);
+                                  }}>
+                                    <svg
+                                      width="16px"
+                                      height="16px"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="feather feather-heart"
+                                    >
+                                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                  </div>
+                                ) : (
+                                  <div className="card__favorite__icon--filled" onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleFilledFavoriteClick(category, index);
+                                  }}>
+                                    <svg
+                                      width="16px"
+                                      height="16px"
+                                      viewBox="0 0 24 24"
+                                      fill="red"
+                                      stroke="red"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="feather feather-heart"
+                                    >
+                                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
                               <div className="card__view__data">
                                 <p className="card__view__preview">Preview</p>
                                 <p className="card__play__icon">
@@ -237,26 +385,25 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                             </div>
                             <div className="card__content">
                               <h3 className="channel__video__name">
-                              {item.name.length > 30
-                                      ? `${item.name.substring(
-                                          0,
-                                          30
-                                        )}...`
-                                      : item.name}
+                                {item.name.length > 30
+                                  ? `${item.name.substring(
+                                    0,
+                                    30
+                                  )}...`
+                                  : item.name}
                               </h3>
                               <div className="channel__data">
                                 <div className="channel__data__text">
                                   <p className="channel__name">
                                     {item.description.length > 30
                                       ? `${item.description.substring(
-                                          0,
-                                          30
-                                        )}...`
+                                        0,
+                                        30
+                                      )}...`
                                       : item.description}
                                   </p>
                                   <div className="channel__subdata">
                                     <p className="channel__views">
-                                      519.7K Views
                                     </p>
                                   </div>
                                 </div>
@@ -276,4 +423,4 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
   );
 });
 
-export default React.memo(Dashboard);
+export default Dashboard;

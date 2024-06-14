@@ -11,6 +11,32 @@ const Search = ({ setPlayerVisible, logout, setUserlogged, setMenuOpened, darkMo
   const navigate = useNavigate();
   const { handlePlay } = useContext(MusicPlayerContext);
 
+  const addToRecentlyPlayed = useCallback(async (item) => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `https://podstar-1.onrender.com/api/user/recently-played?id=${item.id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      setResults(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [logout, setPlayerVisible, setMenuOpened, setUserlogged, navigate]);
+
+
   // Function to fetch search results
   const fetchSearchResults = useCallback(async (searchQuery) => {
     if (!Cookies.get("token")) {
@@ -86,8 +112,9 @@ const Search = ({ setPlayerVisible, logout, setUserlogged, setMenuOpened, darkMo
       navigate("/login");
       return;
     }
+    addToRecentlyPlayed(item);
     handlePlay(item);
-  }, [logout, setMenuOpened,setPlayerVisible, setUserlogged, navigate, handlePlay]);
+  }, [logout, setMenuOpened,addToRecentlyPlayed, setPlayerVisible, setUserlogged, navigate, handlePlay]);
 
   return (
     <div id="content"

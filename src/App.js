@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Dashboard from "./pages/Dashboard";
 import Search from "./pages/Search";
 import Favourite from "./pages/Favourite";
+import History from "./pages/History";
 import UploadPodcast from "./pages/UploadPodcast";
 import UploadPodcastAudio from "./pages/UploadPodcastAudio";
 import Login from "./pages/Login";
@@ -17,6 +18,7 @@ import ReactJkMusicPlayer from "react-jinke-music-player";
 import "react-jinke-music-player/assets/index.css";
 import CookieConsent from "./utils/CookiesConsent";
 import Cookies from "js-cookie";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
@@ -105,12 +107,14 @@ function App() {
               <Route path="/" element={isAuthenticated ? <Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/> : <Homepage />} />
                 <Route path="/login" element={<Login darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
                 <Route path="/signup" element={<Register darkMode={darkMode} />} />
+                <Route path="/forgot-password" element={<ForgotPassword darkMode={darkMode} />} />
                 {isAuthenticated ? (
                   <>
                     <Route path="/dashboard" element={<Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/>} />
                     <Route path="/upload-podcast" element={<UploadPodcast setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} setPlayerVisible={setPlayerVisible}/>} />
                     <Route path="/search" element={<Search setPlayerVisible={setPlayerVisible} logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened} darkMode={darkMode}/>} />
                     <Route path="/favourite" element={<Favourite setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="/history" element={<History darkMode={darkMode} setPlayerVisible={setPlayerVisible}  logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened}/>} />
                     <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/>} />
                   </>
                 ) : (
@@ -131,7 +135,7 @@ function App() {
             showReload={false}
             showThemeSwitch={false}
             responsive={false}
-            spaceBar="true"
+            spaceBar={true}
             showPlayMode={false}
             toggleMode={false}
             clearPriorAudioLists={true}

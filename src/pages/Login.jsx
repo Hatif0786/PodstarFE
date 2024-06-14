@@ -162,7 +162,7 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
                   <input type="checkbox" />
                   <label>Remember me </label>
                 </div>
-                <span className="span">Forgot password?</span>
+                <Link to="/forgot-password" className="span">Forgot password?</Link>
               </div>
               <button className="button-submit">Sign In</button>
               <p className="p">

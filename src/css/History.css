@@ -1,0 +1,104 @@
+.text{
+    font-family: "Ubuntu", sans-serif !important;
+    font-weight: 400;
+    font-style: normal;
+}
+body {
+    overflow: hidden; /* Hide scrollbar */
+  }
+  
+  .history-container {
+    padding: 0 10px;
+    height: 100vh;
+    overflow-y: scroll; /* Enable scrolling */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+  }
+  
+  .history-container::-webkit-scrollbar {
+    width: 0;  /* For Chrome, Safari, and Opera */
+  }
+  
+  .history-content {
+    padding-bottom: 50px; /* Extra space at the bottom for scrolling */
+  }
+  
+  .history-title {
+    margin-left: 3%;
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
+    font-size: 25px;
+  }
+  
+  .history-card {
+    display: flex;
+    position: relative;
+    margin: 2.5%;
+    z-index: 0;
+    border: none;
+    background-color: inherit;
+    color: inherit;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  
+  .icon-button-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  .card-media {
+    width: 100%;
+    height: auto;
+  }
+  
+  @media (min-width: 600px) {
+    .history-card {
+      flex-direction: row;
+      max-height: 200px;
+    }
+  
+    .card-media {
+      width: 151px;
+      height: 151px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .history-title {
+      margin-left: 5%;
+      margin-right: 5%;
+      font-size: 20px;
+    }
+  
+    .history-card {
+      margin: 1.5%;
+      border-radius: 2%;
+    }
+
+    #historyTitle{
+        font-size: 1.8rem;
+        text-align: center;
+        margin-top: 7%;
+        margin-bottom: 7%;
+    }
+
+    #sideMenu{
+        margin-top: 5%;
+        margin-right: 5%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .history-title {
+      margin-left: 10px;
+      margin-right: 10px;
+      font-size: 18px;
+    }
+  
+    .history-card {
+      margin: 1.5%;
+    }
+  }
+  
