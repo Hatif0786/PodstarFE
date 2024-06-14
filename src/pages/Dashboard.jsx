@@ -146,6 +146,30 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     }
   }, [logout, location.pathname, navigate, setUserlogged, setMenuOpened, setPlayerVisible]);
 
+  const addToRecentlyPlayed = useCallback(async (item) => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+    try {
+      await axios.post(
+        `https://podstar-1.onrender.com/api/user/recently-played?id=${item.id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }, [logout, setPlayerVisible, setMenuOpened, setUserlogged, navigate]);
+
   const handleCardClick = useCallback((item) => {
     if (!Cookies.get("token")) {
       logout();
@@ -157,31 +181,8 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     }
     addToRecentlyPlayed(item);
     handlePlay(item);
-  }, [logout, setMenuOpened, setUserlogged, navigate, handlePlay, setPlayerVisible]);
+  }, [logout, setMenuOpened,addToRecentlyPlayed, setUserlogged, navigate, handlePlay, setPlayerVisible]);
 
-  const addToRecentlyPlayed = async (item) => {
-    if (!Cookies.get("token")) {
-      logout();
-      setPlayerVisible(false);
-      setMenuOpened(false);
-      setUserlogged(false);
-      navigate("/login");
-      return;
-    }
-    try{
-      await axios.post(
-        `https://podstar-1.onrender.com/api/user/recently-played?id=${item.id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
-    }catch(error){
-      console.log(error);
-    }
-  }
 
   const handleFavoriteClick = async (category, index) => {
     if (!Cookies.get("token")) {
