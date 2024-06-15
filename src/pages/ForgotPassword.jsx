@@ -19,9 +19,28 @@ const ForgotPassword = ({ darkMode }) => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const otpRefs = useRef([]);
 
+    const [errors, setErrors] = useState({});
+
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    };
+
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         setLoader(true);
+        const validationErrors = {};
+        if (!email) validationErrors.email = "Email is required";
+        else if (!validateEmail(email)) validationErrors.email = "Invalid email format";
+
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErr("Sorry! Please Try Again")
+            setLoader(false);
+            return;
+        }
+
         try {
             const resp = await axios.post(`https://podstar-1.onrender.com/api/user/forgot-password-email?email=${email}`);
             setLoader(false);
@@ -69,6 +88,20 @@ const ForgotPassword = ({ darkMode }) => {
             navigate("/forgot-password")
             return;
         }else if(Cookies.get("verified")==="yes"){
+            const validationErrors = {};
+            if (!password) validationErrors.password = "Password is required";
+            else if (!validatePassword(password)) validationErrors.password = "Password must be 8-12 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character";
+            if (!confirmPassword) validationErrors.confirmPassword = "Confirm password is required";
+            else if (password !== confirmPassword) validationErrors.confirmPassword = "Passwords do not match";
+
+            setErrors(validationErrors);
+
+            if (Object.keys(validationErrors).length > 0) {
+            setErr("Sorry! Please Try Again")
+            setLoader(false);
+            return;
+            }
+
             const passwordDto = {
                 password: password,
                 confirmPassword: confirmPassword
@@ -97,6 +130,11 @@ const ForgotPassword = ({ darkMode }) => {
         }
     }
 
+    const validatePassword = (password) => {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,12}$/;
+        return re.test(password);
+    };
+
 
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
@@ -106,12 +144,23 @@ const ForgotPassword = ({ darkMode }) => {
         try {
             const resp = await axios.post(`https://podstar-1.onrender.com/api/user/forgot-password-otp-validation?email=${em}`, { otp });
             setLoader(false);
-            if (resp.status === 202) {
+            if (resp.status === 202 && resp.data==="Verified") {
                 setOtpSent(false);
                 setAfterOtp(true);
                 Cookies.remove("email");
                 const expires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
                 Cookies.set("verified", "yes", { expires });
+            }else{
+                setLoader(false);
+                setErr('Invalid OTP!');
+                if (errTimeout) {
+                    clearTimeout(errTimeout);
+                }
+
+                const timeout = setTimeout(() => {
+                    setErr('');
+                }, 3000);
+                setErrTimeout(timeout);
             }
         } catch (error) {
             if (error.response && error.response.status === 409) {
@@ -152,24 +201,29 @@ const ForgotPassword = ({ darkMode }) => {
                             <h1 className="heading" style={{ fontSize: "30px", margin: "10px 0", color: darkMode ? "#be1adb" : "black" }}><b>Reset Password</b></h1>
                         </div>
                         <div style={{ textAlign: "center" }}>
-                            {err &&
-                                <div className="notifications-container" style={{
-                                    margin: 'auto'
-                                }}>
-                                    <div className="error-alert">
-                                        <div className="flex" style={{ paddingLeft: "35px" }}>
-                                            {/* <div className="flex-shrink-0">
-                                                <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" className="error-svg">
-                                                    <path clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" fillRule="evenodd"></path>
-                                                </svg>
-                                            </div> */}
-                                            <div className="error-prompt-container">
-                                                <p className="error-prompt-heading text-center">{err}</p>
-                                            </div>
-                                        </div>
+                        {err &&
+                            <div className="notifications-container">
+                                <div className="error-alert">
+                                <div className="flex">
+                                    {/* <div className="flex-shrink-0">
+                                    <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" className="error-svg">
+                                        <path clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 001.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" fillRule="evenodd"></path>
+                                    </svg>
+                                    </div> */}
+                                    <div className="error-prompt-container">
+                                    <p className="error-prompt-heading">{err}</p>
+                                    <div className="error-prompt-wrap">
+                                        <ul className="error-prompt-list">
+                                        {errors.email && <li>{errors.email}</li>}
+                                        {errors.password && <li>{errors.password}</li>}
+                                        {errors.confirmPassword && <li>{errors.confirmPassword}</li>}
+                                        </ul>
+                                    </div>
                                     </div>
                                 </div>
-                            }
+                                </div>
+                            </div>
+                        }
                         </div>
                     </div>
                     <div
@@ -217,7 +271,7 @@ const ForgotPassword = ({ darkMode }) => {
                                             ref={el => otpRefs.current[index] = el}
                                             required="required"
                                             maxLength="1"
-                                            type="text"
+                                            type="number"
                                             className="otp-input"
                                             onChange={(e) => handleOtpChange(e, index)}
                                         />
@@ -238,7 +292,6 @@ const ForgotPassword = ({ darkMode }) => {
                                     viewBox="-64 0 512 512"
                                     width="20"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    onClick={handleShowPassword} style={{ cursor: "pointer" }}
                                     >
                                     <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
                                     <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
@@ -265,7 +318,6 @@ const ForgotPassword = ({ darkMode }) => {
                                     viewBox="-64 0 512 512"
                                     width="20"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    onClick={handleShowPassword} style={{ cursor: "pointer" }}
                                     >
                                     <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
                                     <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
