@@ -181,10 +181,10 @@ const History = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible, 
                   }}
                 >
                   <MenuItem onClick={() => { deleteFromRecentlyPlayed(selectedItem); handleMenuClose(); }}>
-                    <DeleteRounded /><b>Delete</b>
+                    <DeleteRounded /><b style={{marginLeft:"8px"}}>Delete</b>
                   </MenuItem>
                   <MenuItem onClick={handleMenuClose}>
-                    <AddRounded /><b>More</b>
+                    <AddRounded /><b style={{marginLeft:"8px"}}>More</b>
                   </MenuItem>
                 </Menu>
               </div>

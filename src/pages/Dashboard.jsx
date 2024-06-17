@@ -58,8 +58,15 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       }
     
       try {
-        const user = JSON.parse(Cookies.get('user'));
-        const favoriteAlbumArray = Array.isArray(user.favouriteAlbum) ? user.favouriteAlbum : [];
+        const response = await axios.get(
+          "https://podstar-1.onrender.com/api/user/favourite-albums",
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
+        const favoriteAlbumArray = response.data;
         setFavouriteAlbum(favoriteAlbumArray);
         return favoriteAlbumArray;
       } catch (error) {
@@ -118,11 +125,18 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
               },
             }
           );
+
+          const userFavouriteIds = userFavourites.map(fav => fav.id);
+
           const dataWithDurations = await Promise.all(
-            response.data.map(async (item) => {
-              const duration = await getAudioDuration(item.albumUrl);
-              return { ...item, duration, isFavorite: userFavourites.includes(item.id) };
-            })
+          response.data.map(async (item) => {
+            const duration = await getAudioDuration(item.albumUrl);
+            return { 
+              ...item, 
+              duration, 
+              isFavorite: userFavouriteIds.includes(item.id) 
+            };
+          })
           );
           return { category, data: dataWithDurations };
         });

@@ -28,10 +28,16 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
         if ((resp.status === 200 && resp.data.user.role==="ADMIN") || (resp.status === 200 && resp.data.user.role==="NORMAL")) {
           //localStorage.setItem("user", JSON.stringify(resp.data.user));
           //localStorage.setItem("token", resp.data.token);
-          Cookies.set("user", JSON.stringify(resp.data.user), {
+          const userString = JSON.stringify(resp.data.user);
+          console.log("User Stringified:", userString); // Debugging line
+          Cookies.set("user", userString, {
+            sameSite: 'None',
+            secure: true,
             expires: 1 / 24, // Set cookie expiration to 1 hour
           });
           Cookies.set("token", resp.data.token, {
+            sameSite: 'None',
+            secure: true,
             expires: 1 / 24, // Set cookie expiration to 1 hour
           });
           setUserlogged(true);
