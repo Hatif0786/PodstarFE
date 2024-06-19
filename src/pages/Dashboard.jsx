@@ -46,119 +46,121 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     }
   };
 
+  
+  const fetchUserFavorites = useCallback(async () => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return [];
+    }
+
+    try {
+      const response = await axios.get(
+        "https://podstar-1.onrender.com/api/user/favourite-albums",
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      const favoriteAlbumArray = response.data;
+      setFavouriteAlbum(favoriteAlbumArray);
+      return favoriteAlbumArray;
+    } catch (error) {
+      console.error('Error fetching user favorites:', error);
+      return [];
+    }
+  }, [logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged]);
+
+  const fetchCategoryData = useCallback(async (categories) => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+    try {
+      const userFavourites = await fetchUserFavorites(); // Ensure user favorites are fetched first
+
+      const categoryDataPromises = categories.map(async (category) => {
+        const response = await axios.get(
+          `https://podstar-1.onrender.com/api/album/${category}`,
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
+
+        const userFavouriteIds = userFavourites.map(fav => fav.id);
+
+        const dataWithDurations = await Promise.all(
+        response.data.map(async (item) => {
+          const duration = await getAudioDuration(item.albumUrl);
+          return { 
+            ...item, 
+            duration, 
+            isFavorite: userFavouriteIds.includes(item.id) 
+          };
+        })
+        );
+        return { category, data: dataWithDurations };
+      });
+
+      const categoryDataArray = await Promise.all(categoryDataPromises);
+      const categoryData = categoryDataArray.reduce((acc, curr) => {
+        acc[curr.category] = curr.data;
+        return acc;
+      }, {});
+
+      setCategoryData(categoryData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  }, [logout, navigate, fetchUserFavorites, setMenuOpened, setPlayerVisible, setUserlogged]);
+
+  
+  const fetchCategories = useCallback(async () => {
+    setLoader(true);
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await axios.get(
+        "https://podstar-1.onrender.com/api/album/categories",
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      const categories = response.data;
+      const shuffledCategories = shuffleCategories(categories);
+      setCategories(shuffledCategories);
+      await fetchCategoryData(shuffledCategories);
+    } catch (error) {
+      console.error(error);
+      setLoader(false);
+    }
+  }, [logout, navigate, fetchCategoryData, setMenuOpened, setPlayerVisible, setUserlogged]);
+
   useEffect(() => {
-    const fetchUserFavorites = async () => {
-      if (!Cookies.get("token")) {
-        logout();
-        setPlayerVisible(false);
-        setMenuOpened(false);
-        setUserlogged(false);
-        navigate("/login");
-        return [];
-      }
-    
-      try {
-        const response = await axios.get(
-          "https://podstar-1.onrender.com/api/user/favourite-albums",
-          {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
-        );
-        const favoriteAlbumArray = response.data;
-        setFavouriteAlbum(favoriteAlbumArray);
-        return favoriteAlbumArray;
-      } catch (error) {
-        console.error('Error fetching user favorites:', error);
-        return [];
-      }
-    };
-    
-    const fetchCategories = async () => {
-      setLoader(true);
-      if (!Cookies.get("token")) {
-        logout();
-        setPlayerVisible(false);
-        setMenuOpened(false);
-        setUserlogged(false);
-        navigate("/login");
-        return;
-      }
-      try {
-        const response = await axios.get(
-          "https://podstar-1.onrender.com/api/album/categories",
-          {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
-        );
-        const categories = response.data;
-        const shuffledCategories = shuffleCategories(categories);
-        setCategories(shuffledCategories);
-        await fetchCategoryData(shuffledCategories);
-      } catch (error) {
-        console.error(error);
-        setLoader(false);
-      }
-    };
-
-    const fetchCategoryData = async (categories) => {
-      if (!Cookies.get("token")) {
-        logout();
-        setPlayerVisible(false);
-        setMenuOpened(false);
-        setUserlogged(false);
-        navigate("/login");
-        return;
-      }
-      try {
-        const userFavourites = await fetchUserFavorites(); // Ensure user favorites are fetched first
-
-        const categoryDataPromises = categories.map(async (category) => {
-          const response = await axios.get(
-            `https://podstar-1.onrender.com/api/album/${category}`,
-            {
-              headers: {
-                Authorization: `Bearer ${Cookies.get("token")}`,
-              },
-            }
-          );
-
-          const userFavouriteIds = userFavourites.map(fav => fav.id);
-
-          const dataWithDurations = await Promise.all(
-          response.data.map(async (item) => {
-            const duration = await getAudioDuration(item.albumUrl);
-            return { 
-              ...item, 
-              duration, 
-              isFavorite: userFavouriteIds.includes(item.id) 
-            };
-          })
-          );
-          return { category, data: dataWithDurations };
-        });
-
-        const categoryDataArray = await Promise.all(categoryDataPromises);
-        const categoryData = categoryDataArray.reduce((acc, curr) => {
-          acc[curr.category] = curr.data;
-          return acc;
-        }, {});
-
-        setCategoryData(categoryData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoader(false);
-      }
-    };
-
     if (location.pathname === "/dashboard" || location.pathname === "/") {
       fetchCategories();
     }
-  }, [logout, location.pathname, navigate, setUserlogged, setMenuOpened, setPlayerVisible]);
+  }, [logout, location.pathname, fetchCategories, navigate, setUserlogged, setMenuOpened, setPlayerVisible]);
 
   const addToRecentlyPlayed = useCallback(async (item) => {
     if (!Cookies.get("token")) {
@@ -410,10 +412,10 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                               <div className="channel__data">
                                 <div className="channel__data__text">
                                   <p className="channel__name">
-                                    {item.description.length > 30
+                                    {item.description.length > 60
                                       ? `${item.description.substring(
                                         0,
-                                        30
+                                        60
                                       )}...`
                                       : item.description}
                                   </p>
