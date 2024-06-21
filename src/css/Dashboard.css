@@ -109,7 +109,7 @@ scrollbar-width: none;  /* Firefox */
   
   .channel__video__name {
     font-size: 0.9rem;
-    margin-top: 3.2%;
+    margin-top: 3.0%;
     margin-bottom: 10px;
     max-height: 50%;
     overflow: hidden;

@@ -142,7 +142,7 @@ const ForgotPassword = ({ darkMode }) => {
         const otp = otpRefs.current.map(ref => ref.value).join('');
         const em = Cookies.get('email');
         try {
-            const resp = await axios.post(`https://podstar-1.onrender.com/api/user/forgot-password-otp-validation?email=${em}`, { otp });
+            const resp = await axios.post(`https://podstar-1.onrender.com/api/user/account-verification-otp-validation?email=${em}`, { otp });
             setLoader(false);
             if (resp.status === 202 && resp.data==="Verified") {
                 setOtpSent(false);

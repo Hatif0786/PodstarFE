@@ -19,7 +19,7 @@ import "react-jinke-music-player/assets/index.css";
 import CookieConsent from "./utils/CookiesConsent";
 import Cookies from "js-cookie";
 import ForgotPassword from "./pages/ForgotPassword";
-
+import NotFound from "./pages/NotFound"
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
 
@@ -116,6 +116,7 @@ function App() {
                     <Route path="/favourite" element={<Favourite setPlayerVisible={setPlayerVisible}/>} />
                     <Route path="/history" element={<History darkMode={darkMode} setPlayerVisible={setPlayerVisible}  logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened}/>} />
                     <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="*" element={<NotFound darkMode={darkMode} />} />
                   </>
                 ) : (
                   <Route path="*" element={<Navigate to="/login" />} />
