@@ -97,8 +97,14 @@
   @media (max-width: 768px) {
       margin-left: 0 !important;
       transform: translate(-5.5%);
-    --size:340px;
+    --size:270px;
   }
+
+  @media (max-width: 576px) {
+    margin-left: 0 !important;
+    transform: translate(-5.5%);
+    --size:340px;
+}
 }
 
 /* With the before property assigns the gradient that will be used as background for the chart. */
