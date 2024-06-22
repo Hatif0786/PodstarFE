@@ -242,7 +242,7 @@ Modify the background-image with the address of the cover to use. */
   margin-bottom: 1%;
   transition: color 400ms;
   @media (max-width: 768px) {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   @media (max-width: 576px) {
     font-size: 1.05rem;
