@@ -305,7 +305,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                       style={{ marginTop: "2.5%", marginLeft: "1.5%", marginRight: "2.8%" }}
                     >
                       {categoryData[category].map((item, index) => (
-                        <div key={index} className="col-sm-3">
+                        <div key={index} className="col-sm-3" style={{}}>
                           <div
                             className="card"
                             style={{ marginLeft: "20px", marginRight: "20px", marginBottom: "20px" }}

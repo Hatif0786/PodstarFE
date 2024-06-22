@@ -5,6 +5,9 @@
     display: inline-block;
     width: 3.5em;
     height: 2em;
+    @media(max-width: 768px) {
+      font-size:14px;
+    }
   }
   
   /* Hide default HTML checkbox */

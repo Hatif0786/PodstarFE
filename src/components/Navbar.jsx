@@ -20,6 +20,7 @@ const NavbarDiv = styled.div`
   -webkit-backdrop-filter: blur(5.7px);
   @media (max-width: 768px) {
     padding: 16px;
+    gap:10px;
   }
 `;
 
@@ -39,6 +40,9 @@ const Logo = styled.div`
   font-size: 35px;
   margin: 16px px;
   padding-left: 5px;
+  @media (max-width: 768px) {
+    font-size:31px;
+  }
 `;
 
 const ButtonDiv = styled.div`
@@ -62,6 +66,9 @@ const LetsGoButton = styled(ButtonDiv)`
 
 const Image = styled.img`
   height: 40px;
+  @media (max-width: 768px) {
+    height:31px;
+  }
 `;
 
 const IcoButton = styled(IconButton)`
