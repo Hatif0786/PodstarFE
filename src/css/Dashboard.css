@@ -242,7 +242,6 @@ scrollbar-width: none;  /* Firefox */
   /* Adjusting the columns to be 50% wide on small screens */
   .col-sm-3 {
     flex: 0 0 50%;
-    margin-right: 2px;
     max-width: 50%;
   }
   
@@ -253,7 +252,7 @@ scrollbar-width: none;  /* Firefox */
 
   /* Ensuring no left margin for the row */
   #row {
-    margin-left: 15px !important;
+    margin-left: 20px !important;
   }
 
   /* Adjusting right margin for fluid containers */
