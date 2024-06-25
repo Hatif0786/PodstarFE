@@ -27,7 +27,7 @@ const NavbarDiv = styled.div`
   }
   @media (max-width: 576px) {
     padding-left:15px !important;
-    padding-right:8px !important;
+    margin-right:10px !important;
     gap: 7px;
   }
 `;
