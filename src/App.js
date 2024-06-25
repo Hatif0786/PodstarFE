@@ -87,6 +87,14 @@ function App() {
     return <div>Loading...</div>;
   }
 
+  const StyledMusicPlayer = styled(ReactJkMusicPlayer)`
+    margin-top: 4.5%;
+
+    @media (max-width: 576px) {
+      margin-top: 17%;
+    }
+  `;
+
   
   return (
     <MusicPlayerContext.Provider value={musicPlayerContextValue}>
@@ -132,7 +140,7 @@ function App() {
           </Container>
         </Router>
         {isPlayerVisible && (
-          <ReactJkMusicPlayer
+          <StyledMusicPlayer
             audioLists={audioLists}
             showMediaSession
             autoPlay={true}
@@ -149,8 +157,6 @@ function App() {
             getAudioInstance={(instance) => {
               playerRef.current = instance;
             }}
-
-            style={{marginTop:"4.5%"}}
           />
         )}
         <CookieConsent />
