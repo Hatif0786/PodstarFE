@@ -335,7 +335,8 @@ Modify the background-image with the address of the cover to use. */
   .container-fluid{
     margin-right: 1%;
   }
-  
+
+
 }
 
 /* For mobile screens (up to 576px) */
@@ -346,7 +347,9 @@ Modify the background-image with the address of the cover to use. */
     margin-left:2.4px;
   }
 
-  
+  .search-container{
+    margin: 0 !important;
+  }
 }
 
 @media (min-width: 576px) {
