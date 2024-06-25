@@ -43,9 +43,3 @@ body {
   border-radius: 6px;
   height: 50px;
 }
-
-@media (max-width: 576px) {
-  .musicPlayer{
-    margin-top: 17%;
-  }
-}

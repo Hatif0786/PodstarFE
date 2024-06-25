@@ -90,7 +90,7 @@ function App() {
   const StyledMusicPlayer = styled(ReactJkMusicPlayer)`
     margin-top: 4.5%;
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       margin-top: 4.5%;
     }
 
