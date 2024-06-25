@@ -253,7 +253,7 @@ scrollbar-width: none;  /* Firefox */
 
   /* Ensuring no left margin for the row */
   #row {
-    margin-left: 20px !important;
+    margin-left: 15px !important;
   }
 
   /* Adjusting right margin for fluid containers */
