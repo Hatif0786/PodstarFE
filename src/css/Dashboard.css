@@ -242,7 +242,7 @@ scrollbar-width: none;  /* Firefox */
   /* Adjusting the columns to be 50% wide on small screens */
   .col-sm-3 {
     flex: 0 0 50%;
-    margin-right: 5px;
+    margin-right: 2px;
     max-width: 50%;
   }
   
