@@ -40,6 +40,18 @@ const Frame = styled.div`
   flex: 3;
 `;
 
+const StyledMusicPlayer = styled(ReactJkMusicPlayer)`
+    margin-top: 4.5%;
+
+    @media (max-width: 768px) {
+      margin-top: 4.5%;
+    }
+
+    @media (max-width: 576px) {
+      margin-top: 17%;
+    }
+`;
+
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -86,18 +98,6 @@ function App() {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const StyledMusicPlayer = styled(ReactJkMusicPlayer)`
-    margin-top: 4.5%;
-
-    @media (max-width: 768px) {
-      margin-top: 4.5%;
-    }
-
-    @media (max-width: 576px) {
-      margin-top: 17%;
-    }
-  `;
 
   
   return (
