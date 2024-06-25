@@ -12,7 +12,7 @@ const NavbarDiv = styled.div`
   display: flex;
   justify-content: space-between;
   padding-right:18px;
-  padding-left:28px !important;
+  padding-left:28px;
   align-items: center;
   gap: 15px;
   color: ${({ theme }) => theme.text_primary};
@@ -24,6 +24,10 @@ const NavbarDiv = styled.div`
     padding-left:23px;
     padding-right:16px;
     gap: 10px;
+  }
+  @media (max-width: 576px) {
+    padding-left:15px !important;
+    gap: 7px;
   }
 `;
 
