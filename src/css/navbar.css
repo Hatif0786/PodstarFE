@@ -12,13 +12,13 @@
   
   @media (max-width: 768px) {
     .profileImg{
-      margin-right: 20px;
+      margin-right: 12px;
     }
   }
 
   @media (max-width: 576px) {
     .profileImg{
-      margin-right: 20px;
+      margin-right: 12px;
     }
   }
   
