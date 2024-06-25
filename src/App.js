@@ -149,6 +149,8 @@ function App() {
             getAudioInstance={(instance) => {
               playerRef.current = instance;
             }}
+
+            style={{marginTop:"4.5%"}}
           />
         )}
         <CookieConsent />

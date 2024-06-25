@@ -282,7 +282,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
         </section>
       ) : (
         <div id="content"
-          style={{ overflowY: "auto", height: "100vh", marginBottom: "50px" }}
+          style={{ overflowY: "auto", height: "100vh" }}
         >
           {categories.map(
             (category) =>
@@ -292,8 +292,8 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                   <h1
                     style={{
                       marginLeft: "3%",
-                      marginTop: "2.5%",
-                      marginBottom: "2.5%",
+                      marginTop: "1.5%",
+                      marginBottom: "10px",
                       fontSize: "25px",
                     }}
                   >
@@ -302,7 +302,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                   <div className="container-fluid text-center">
                     <div
                       className="row" id="row"
-                      style={{ marginTop: "2.5%", marginLeft: "1.5%", marginRight: "2.8%" }}
+                      style={{ marginTop: "1.5%", marginLeft: "1.5%", marginRight: "2.8%" }}
                     >
                       {categoryData[category].map((item, index) => (
                         <div key={index} className="col-sm-3" style={{}}>
