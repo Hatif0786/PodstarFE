@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
+const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, setProfileImageUrl}) => {
   const [err, setErr] = useState("");
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
@@ -28,8 +28,7 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
         if ((resp.status === 200 && resp.data.user.role==="ADMIN") || (resp.status === 200 && resp.data.user.role==="NORMAL")) {
           //localStorage.setItem("user", JSON.stringify(resp.data.user));
           //localStorage.setItem("token", resp.data.token);
-          const userString = JSON.stringify(resp.data.user);
-          console.log("User Stringified:", userString); // Debugging line
+          const userString = JSON.stringify(resp.data.user); // Debugging line
           Cookies.set("user", userString, {
             sameSite: 'None',
             secure: true,
@@ -42,6 +41,9 @@ const Login = ({darkMode, setMenuOpen, setUserlogged, onLogin}) => {
           });
           setUserlogged(true);
           onLogin();
+          console.log(resp.data.user.profileImageUrl);
+          setProfileImageUrl(resp.data.user.profileImageUrl);
+          console.log(profileImageUrl);
           navigate("/dashboard");
         }
       }catch (error) {

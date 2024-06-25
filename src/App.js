@@ -20,6 +20,7 @@ import CookieConsent from "./utils/CookiesConsent";
 import Cookies from "js-cookie";
 import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound"
+import Profile from "./pages/Profile";
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
 
@@ -45,7 +46,7 @@ function App() {
   const [menuOpened, setMenuOpened] = useState(true);
   const { isAuthenticated, loading, checkAuth, logout } = useAuth();
   const [userlogged, setUserlogged] = useState(isAuthenticated);
-
+  const [profileImageUrl, setProfileImageUrl] = useState("");
   const [audioLists, setAudioLists] = useState([]);
   const [isPlayerVisible, setPlayerVisible] = useState(false);
   const playerRef = useRef(null);
@@ -100,12 +101,16 @@ function App() {
                 setUserlogged={setUserlogged}
                 toggleMenu={toggleMenu}
                 setDarkMode={toggleDarkMode}
+                setMenuOpen={setMenuOpen}
                 darkMode={darkMode}
+                profileImageUrl={profileImageUrl}
+                setProfileImageUrl={setProfileImageUrl}
+                setPlayerVisible={setPlayerVisible}
                 logout={logout}
               />
               <Routes>
               <Route path="/" element={isAuthenticated ? <Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/> : <Homepage />} />
-                <Route path="/login" element={<Login darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
+                <Route path="/login" element={<Login profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl} darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
                 <Route path="/signup" element={<Register darkMode={darkMode} />} />
                 <Route path="/forgot-password" element={<ForgotPassword darkMode={darkMode} />} />
                 {isAuthenticated ? (
@@ -117,6 +122,7 @@ function App() {
                     <Route path="/history" element={<History darkMode={darkMode} setPlayerVisible={setPlayerVisible}  logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened}/>} />
                     <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/>} />
                     <Route path="*" element={<NotFound darkMode={darkMode} />} />
+                    <Route path="/profile" element={<Profile darkMode={darkMode} setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl}/>} />
                   </>
                 ) : (
                   <Route path="*" element={<Navigate to="/login" />} />

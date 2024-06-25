@@ -43,6 +43,8 @@
     background: var(--background);
     transition: .5s;
   }
+
+  
   
   input:checked + .slider {
     background-color: #FFFFFF;

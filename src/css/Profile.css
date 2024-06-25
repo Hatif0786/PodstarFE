@@ -1,0 +1,94 @@
+.img-account-profile {
+    height: 9.1rem;
+    width: 9rem;
+}
+#profileContainer{
+    overflow-y: scroll;
+  }
+#profileContainer::-webkit-scrollbar {
+ display: none;
+}
+
+/* Hiding scrollbar for IE, Edge and Firefox */
+#content {
+scrollbar-width: none;  /* Firefox */
+-ms-overflow-style: none;  /* IE and Edge */
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+/* .card132 {
+    box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+} */
+.card132 .card-header {
+    font-weight: 500;
+}
+.card-header:first-child {
+    border-radius: 0.35rem 0.35rem 0 0;
+}
+.card-header {
+    padding: 1rem 1.35rem;
+    margin-bottom: 0;
+}
+.form-control, .dataTable-input {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1;
+    color: #69707a;
+    background-clip: padding-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.35rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.nav-borders .nav-link.active {
+    color: #0061f2;
+    border-bottom-color: #0061f2;
+}
+.nav-borders .nav-link {
+    color: #69707a;
+    border-bottom-width: 0.125rem;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.btn1{
+    margin-left: 25%;
+    width:50%;
+    border-radius: 30px;
+    background-color: #be1adb;
+}
+
+.btn1:hover{
+    background-color: #e88df8;
+}
+
+@media (max-width: 768px) {
+    #inpLast{
+        margin-top: 20px;
+    }
+    #inpRole{
+    margin-top: 15px ;
+    }
+}
+
+@media (max-width: 576px) {
+  #inpLast{
+    margin-top: 20px;
+  }
+  #inpRole{
+    margin-top: 15px ;
+  }
+}
