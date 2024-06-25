@@ -10,6 +10,18 @@
     }
   }
   
+  @media (max-width: 768px) {
+    .profileImg{
+      margin-right: 20px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .profileImg{
+      margin-right: 20px;
+    }
+  }
+  
   /* Hide default HTML checkbox */
   .switch input {
     opacity: 0;

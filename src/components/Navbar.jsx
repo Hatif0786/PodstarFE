@@ -174,9 +174,9 @@ const Navbar = ({ toggleMenu, setUserlogged, menuOpened,profileImageUrl, setProf
           <Tooltip title="Open settings">
             <IcoButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               {profileImageUrl ? (
-                <Avatar alt="Profile Image" src={profileImageUrl} style={{ width: 40, height: 40 }} />
+                <Avatar className='profileImg' alt="Profile Image" src={profileImageUrl} style={{ width: 40, height: 40 }} />
               ) : (
-                <AccountCircleTwoTone style={{ fontSize: 40 }} />
+                <AccountCircleTwoTone className='profileImg' style={{ fontSize: 40 }} />
               )}
             </IcoButton>
           </Tooltip>
