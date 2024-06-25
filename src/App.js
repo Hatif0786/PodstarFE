@@ -91,6 +91,10 @@ function App() {
     margin-top: 4.5%;
 
     @media (max-width: 576px) {
+      margin-top: 4.5%;
+    }
+
+    @media (max-width: 576px) {
       margin-top: 17%;
     }
   `;
