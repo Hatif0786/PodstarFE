@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import "../css/Profile.css"
 import { TextField } from '@mui/material'
 import Cookies from "js-cookie";
+import { EditOutlined } from '@mui/icons-material';
 
 const Profile = ({profileImageUrl, setProfileImageUrl}) => {
     const [username, setUsername] = useState('');
@@ -36,6 +37,7 @@ const Profile = ({profileImageUrl, setProfileImageUrl}) => {
                         <img className="img-account-profile rounded-circle mb-2" src={profileImageUrl} alt=""/>
                         :
                         <img className="img-account-profile rounded-circle mb-2" src="http://bootdey.com/img/Content/avatar/avatar1.png" alt=""/>}
+                        {/* <EditOutlined/> */}
                         <h2 style={{marginTop:"10px"}}>{firstName} {lastName}</h2>
                         <div className="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                         <button className="btn btn1"  type="button">Upload new image</button>

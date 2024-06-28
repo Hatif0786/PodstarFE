@@ -2,35 +2,43 @@
     height: 9.1rem;
     width: 9rem;
 }
-#profileContainer{
+
+#profileContainer {
     overflow-y: scroll;
-  }
+    position: relative;
+    display: inline-block;
+}
+
 #profileContainer::-webkit-scrollbar {
- display: none;
+    display: none;
 }
 
 /* Hiding scrollbar for IE, Edge and Firefox */
 #content {
-scrollbar-width: none;  /* Firefox */
--ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
 }
 
 .rounded-circle {
     border-radius: 50% !important;
 }
+
 /* .card132 {
     box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
 } */
 .card132 .card-header {
     font-weight: 500;
 }
+
 .card-header:first-child {
     border-radius: 0.35rem 0.35rem 0 0;
 }
+
 .card-header {
     padding: 1rem 1.35rem;
     margin-bottom: 0;
 }
+
 .form-control, .dataTable-input {
     display: block;
     width: 100%;
@@ -53,6 +61,7 @@ scrollbar-width: none;  /* Firefox */
     color: #0061f2;
     border-bottom-color: #0061f2;
 }
+
 .nav-borders .nav-link {
     color: #69707a;
     border-bottom-width: 0.125rem;
@@ -66,31 +75,42 @@ scrollbar-width: none;  /* Firefox */
     margin-right: 1rem;
 }
 
-.btn1{
+.btn1 {
     margin-left: 25%;
-    width:50%;
+    width: 50%;
     border-radius: 30px;
     background-color: #be1adb;
 }
 
-.btn1:hover{
+.btn1:hover {
     background-color: #e88df8;
 }
 
 @media (max-width: 768px) {
-    #inpLast{
+    #inpLast {
         margin-top: 20px;
     }
-    #inpRole{
-    margin-top: 15px ;
+    #inpRole {
+        margin-top: 15px;
     }
 }
 
 @media (max-width: 576px) {
-  #inpLast{
-    margin-top: 20px;
-  }
-  #inpRole{
-    margin-top: 15px ;
-  }
+    #inpLast {
+        margin-top: 20px;
+    }
+    #inpRole {
+        margin-top: 15px;
+    }
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+    background: white;
+    border-radius: 50%;
+    padding: 4px;
+    border: 1px solid #ccc;
 }
