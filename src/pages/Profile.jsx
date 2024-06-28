@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import "../css/Profile.css"
 import { TextField } from '@mui/material'
 import Cookies from "js-cookie";
-import { EditOutlined } from '@mui/icons-material';
+// import { EditOutlined } from '@mui/icons-material';
 
 const Profile = ({profileImageUrl, setProfileImageUrl}) => {
     const [username, setUsername] = useState('');
