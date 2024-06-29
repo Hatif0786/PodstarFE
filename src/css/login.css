@@ -7,7 +7,7 @@ html {
 }
 
 
-#container::-webkit-scrollbar {
+#content::-webkit-scrollbar {
   display: none;
 }
 

@@ -19,8 +19,10 @@ import "react-jinke-music-player/assets/index.css";
 import CookieConsent from "./utils/CookiesConsent";
 import Cookies from "js-cookie";
 import ForgotPassword from "./pages/ForgotPassword";
-import NotFound from "./pages/NotFound"
+import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import ProtectedRoute from '../src/utils/ProtectedRoute';  // Import the ProtectedRoute component
+
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
 
@@ -99,7 +101,6 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  
   return (
     <MusicPlayerContext.Provider value={musicPlayerContextValue}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
@@ -121,20 +122,20 @@ function App() {
                 logout={logout}
               />
               <Routes>
-              <Route path="/" element={isAuthenticated ? <Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/> : <Homepage />} />
-                <Route path="/login" element={<Login profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl} darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
-                <Route path="/signup" element={<Register darkMode={darkMode} />} />
+                <Route path="/" element={isAuthenticated ? <Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/> : <Homepage />} />
+                <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl} darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
+                <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register darkMode={darkMode} />} />
                 <Route path="/forgot-password" element={<ForgotPassword darkMode={darkMode} />} />
                 {isAuthenticated ? (
                   <>
-                    <Route path="/dashboard" element={<Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/>} />
-                    <Route path="/upload-podcast" element={<UploadPodcast setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} setPlayerVisible={setPlayerVisible}/>} />
-                    <Route path="/search" element={<Search setPlayerVisible={setPlayerVisible} logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened} darkMode={darkMode}/>} />
-                    <Route path="/favourite" element={<Favourite setPlayerVisible={setPlayerVisible}/>} />
-                    <Route path="/history" element={<History darkMode={darkMode} setPlayerVisible={setPlayerVisible}  logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened}/>} />
-                    <Route path="/upload-audio" element={<UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/>} />
+                    <Route path="/dashboard" element={<ProtectedRoute><Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
+                    <Route path="/upload-podcast" element={<ProtectedRoute><UploadPodcast setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} darkMode={darkMode} setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
+                    <Route path="/search" element={<ProtectedRoute><Search setPlayerVisible={setPlayerVisible} logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened} darkMode={darkMode}/></ProtectedRoute>} />
+                    <Route path="/favourite" element={<ProtectedRoute><Favourite setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
+                    <Route path="/history" element={<ProtectedRoute><History darkMode={darkMode} setPlayerVisible={setPlayerVisible} logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened}/></ProtectedRoute>} />
+                    <Route path="/upload-audio" element={<ProtectedRoute><UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
                     <Route path="*" element={<NotFound darkMode={darkMode} />} />
-                    <Route path="/profile" element={<Profile darkMode={darkMode} setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl}/>} />
+                    <Route path="/profile" element={<ProtectedRoute><Profile darkMode={darkMode} setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl}/></ProtectedRoute>} />
                   </>
                 ) : (
                   <Route path="*" element={<Navigate to="/login" />} />

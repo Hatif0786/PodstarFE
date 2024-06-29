@@ -41,9 +41,7 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
           });
           setUserlogged(true);
           onLogin();
-          console.log(resp.data.user.profileImageUrl);
           setProfileImageUrl(resp.data.user.profileImageUrl);
-          console.log(profileImageUrl);
           navigate("/dashboard");
         }
       }catch (error) {
@@ -75,7 +73,7 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
     )}
 
     {!loader && (
-        <div style={{ height: "100vh", overflowY: "auto", paddingBottom: "20px" }}>
+        <div id="content" style={{ height: "100vh", overflowY: "auto", paddingBottom: "20px" }}>
           <div className="container text-center" style={{ marginTop: "45px", marginBottom: "30px"}}>
               <div style={{ textAlign: "center" }}>
                 <h1 className="heading" style={{ fontSize: "30px", margin: "10px 0", color: darkMode ? "#be1adb" : "black"}}><b>Sign In with Podstar</b></h1>
