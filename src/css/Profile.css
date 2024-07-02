@@ -144,7 +144,7 @@
 }
 
 .dot-spinner {
-    --uib-size: 2.8rem;
+    --uib-size: 2.3rem;
     --uib-speed: .9s;
     --uib-color: #183153;
     position: relative;
