@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "../css/Profile.css";
-import { useNavigate } from 'react-router-dom';
 import { TextField, InputAdornment, Button } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
 import Cookies from "js-cookie";
@@ -11,7 +10,6 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
-    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
     const [isEmailVerified, setIsEmailVerified] = useState(false);
@@ -39,8 +37,16 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
         }
     }, []);
 
+    const validatePhone = (phone) => {
+        const re = /^\d{10}$/;
+        return re.test(phone);
+    };
+
     const handleUpdate = async (event) => {
         event.preventDefault();
+        const validationErrors = {};
+        if(!validatePhone(phone)) validationErrors.phone = "Invalid phone number";
+        setErrors(validationErrors);
         setLoading(true);
         const token = Cookies.get("token");
         const data = {
@@ -232,7 +238,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
             <div id="profileContainer" className="container-xl px-4 mt-4">
                 <div style={{ textAlign: "left" }}>
                     {err && 
-                    <div className="notifications-container" style={{margin:"auto"}}>
+                    <div className="notifications-container" style={{}}>
                     <div className="error-alert">
                         <div className="flex">
                         <div className="flex-shrink-0">
@@ -241,8 +247,8 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
                             </svg>
                         </div>
                         <div className="error-prompt-container">
-                            <p className="error-prompt-heading" >{err}
-                            </p><div className="error-prompt-wrap">
+                            <p className="error-prompt-heading">{err}</p>
+                            <div className="error-prompt-wrap">
                             <ul className="error-prompt-list">
                                 {errors.username && <li>{errors.username}</li>}
                                 {errors.phone && <li>{errors.phone}</li>}
@@ -280,7 +286,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
                                 <button className="btn btn1" type="button" onClick={handleUpdateProfileImage}>
                                 {!loadingSec && (<div>Update Profile Image</div>)}
                                         {loadingSec && (
-                                            <div className="dot-spinner" style={{ height: "100%", marginLeft: "10px" }}>
+                                            <div className="dot-spinner" style={{ height: "95%", marginLeft: "10px" }}>
                                                 <div className="dot-spinner__dot"></div>
                                                 <div className="dot-spinner__dot"></div>
                                                 <div className="dot-spinner__dot"></div>
@@ -352,7 +358,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
                                     <button className="btn btn1" type="submit">
                                         {!loading && (<div>Save Changes</div>)}
                                         {loading && (
-                                            <div className="dot-spinner" style={{ height: "100%", marginLeft: "10px" }}>
+                                            <div className="dot-spinner" style={{ height: "95%", marginLeft: "10px" }}>
                                                 <div className="dot-spinner__dot"></div>
                                                 <div className="dot-spinner__dot"></div>
                                                 <div className="dot-spinner__dot"></div>
