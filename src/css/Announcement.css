@@ -1,0 +1,37 @@
+.announcement-banner {
+    background-color: #ffdb58; /* Mustard yellow color */
+    color: #333;
+    padding: 5px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .announcement-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .mic-icon {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .verify-button {
+    background-color: #be1adb;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .verify-button:hover {
+    background-color: #b453c5;
+  }
+  

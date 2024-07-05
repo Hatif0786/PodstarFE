@@ -3,7 +3,7 @@ import styled, { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./utils/Themes";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import Dashboard from "./pages/Dashboard";
 import Search from "./pages/Search";
 import Favourite from "./pages/Favourite";
@@ -22,7 +22,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import ProtectedRoute from '../src/utils/ProtectedRoute';  // Import the ProtectedRoute component
-
+import Announcement from "./components/Announcement";
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
 
@@ -66,6 +66,8 @@ function App() {
   const playerRef = useRef(null);
   const userCookie = Cookies.get('user');
   const userRole = userCookie ? JSON.parse(userCookie).role : null;
+  const [isVerified, setIsVerified] = useState(userCookie ? JSON.parse(userCookie).verified : false);
+
 
   const handlePlay = useCallback((item) => {
     const newAudioLists = [
@@ -108,6 +110,7 @@ function App() {
           <Container>
             {menuOpen && <Sidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} userRole={userRole}/>}
             <Frame>
+              {isAuthenticated && !isVerified && (<Announcement/>)}
               <Navbar
                 userlogged={userlogged}
                 menuOpened={menuOpened}
@@ -135,7 +138,7 @@ function App() {
                     <Route path="/history" element={<ProtectedRoute><History darkMode={darkMode} setPlayerVisible={setPlayerVisible} logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened}/></ProtectedRoute>} />
                     <Route path="/upload-audio" element={<ProtectedRoute><UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
                     <Route path="*" element={<NotFound darkMode={darkMode} />} />
-                    <Route path="/profile" element={<ProtectedRoute><Profile darkMode={darkMode} setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl}/></ProtectedRoute>} />
+                    <Route path="/profile" element={<ProtectedRoute><Profile darkMode={darkMode} setIsVerified={setIsVerified} setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl}/></ProtectedRoute>} />
                   </>
                 ) : (
                   <Route path="*" element={<Navigate to="/login" />} />

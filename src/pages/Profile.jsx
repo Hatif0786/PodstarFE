@@ -5,7 +5,7 @@ import { CheckCircleOutline } from '@mui/icons-material';
 import Cookies from "js-cookie";
 import axios from 'axios';
 
-const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
+const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
     const [username, setUsername] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -143,6 +143,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
                 });
                 Cookies.remove("email");
                 setIsEmailVerified(true);
+                setIsVerified(true);
                 setOtpSent(false);
                 setBeforeOtp(true);
             }else{
@@ -334,7 +335,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl }) => {
                                             variant="filled" 
                                             placeholder="Enter your email" 
                                             value={email} 
-                                            disabled={true}
+                                            disabled={isEmailVerified}
                                             InputProps={{
                                                 endAdornment: (
                                                     <InputAdornment position="end">

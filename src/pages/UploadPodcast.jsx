@@ -151,8 +151,8 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged, setPlaye
           <div className="dot"></div>
         </section>
       ) : (
-        <section className="section_form">
-          <div className="container text-center" style={{ marginTop: "70px", marginBottom: "30px" }}>
+        <section id="content" className="section_form">
+          <div  className="container text-center" style={{ marginTop: "40px", marginBottom: "15px" }}>
             <div style={{ textAlign: "center" }}>
               <h1 className="heading" style={{ fontSize: "30px", margin: "10px 0", color: darkMode ? "#be1adb" : "black" }}>
                 <b>Add the Podcast details</b>
@@ -283,6 +283,7 @@ const UploadPodcast = ({setMenuOpened, darkMode, logout, setUserlogged, setPlaye
                   color: darkMode ? "black" : "#be1adb",
                   fontWeight: "5px",
                   borderRadius: "30px",
+                  marginBottom:"20px",
                   backgroundColor: darkMode ? "#be1adb" : "black"
                 }}
                 onClick={handleDetails}
