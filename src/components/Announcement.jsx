@@ -8,7 +8,7 @@ const Announcement = () => {
     <div className="announcement-banner">
       <div className="announcement-content">
         <GrAnnounce className="mic-icon" />
-        <div>⚠︎ Please verify your account.</div>
+        <div>Please verify your account.</div>
         <Link className="verify-button" to="/profile">Verify</Link>
       </div>
     </div>

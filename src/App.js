@@ -66,7 +66,7 @@ function App() {
   const playerRef = useRef(null);
   const userCookie = Cookies.get('user');
   const userRole = userCookie ? JSON.parse(userCookie).role : null;
-  const [isVerified, setIsVerified] = useState(userCookie ? JSON.parse(userCookie).verified : false);
+  const [isVerified, setIsVerified] = useState(false);
 
 
   const handlePlay = useCallback((item) => {
@@ -96,6 +96,12 @@ function App() {
     setUserlogged(isAuthenticated);
     if (!isAuthenticated) {
       setMenuOpen(false);  // Close the sidebar if not authenticated
+    } else {
+      const userCookie = Cookies.get('user');
+      if (userCookie) {
+        const user = JSON.parse(userCookie);
+        setIsVerified(user.verified);
+      }
     }
   }, [isAuthenticated, checkAuth]);
 
