@@ -1,13 +1,24 @@
 import React from 'react';
-import styled from 'styled-components';
-import heroImage from '../Images/hero-image.jpg';
-import podcastImage from "../Images/podcast-image.jpg"
+import styled, { keyframes } from 'styled-components';
+import heroImage from '../Images/hero-image.png';
+import podcastImage from '../Images/podcast-image.jpg';
 import { Link } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,30 +28,23 @@ const Container = styled.div`
 
 const HeroSection = styled.div`
   width: 100%;
-  min-height: calc(100vh - 60px); /* Adjust based on your navbar height */
+  min-height: calc(100vh - 60px);
   background: url(${podcastImage}) no-repeat center center;
-  background-size: cover; /* Ensures the image covers the full width */
+  background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 2s ease-in-out;
+  animation: ${fadeIn} 2s ease-in-out;
 
   @media (max-width: 768px) {
-    min-height: 70vh; /* Adjust the height as needed */
+    min-height: 70vh;
   }
 
   @media (max-width: 480px) {
-    min-height: 60vh; /* Adjust the height as needed */
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    min-height: 60vh;
   }
 `;
-
-// Rest of the styled components remain unchanged...
 
 const HeroText = styled.div`
   color: white;
@@ -64,7 +68,7 @@ const HeroText = styled.div`
 `;
 
 const Button = styled(Link)`
-  background: transparent; // Set the background to transparent
+  background: transparent;
   color: #be1adb;
   padding: 15px 30px;
   border: 2px solid #be1adb;
@@ -78,7 +82,7 @@ const Button = styled(Link)`
   &:hover {
     border: none;
     background: #be1adb;
-    color: white// Semi-transparent on hover
+    color: white;
   }
 
   @keyframes slideUp {
@@ -97,119 +101,69 @@ const Button = styled(Link)`
   }
 `;
 
-
-const ContentSection = styled.div`
-  width: 80%;
-  max-width: 1200px;
-  margin: 40px auto;
+const InfoSection = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
-
-  @media (max-width: 768px) {
-    width: 90%;
-    margin: 30px auto; /* Slightly reduce vertical margin for tablets */
-  }
-
-  @media (max-width: 480px) {
-    width: 95%;
-    margin: 20px auto; /* Further reduce vertical margin for mobiles */
-  }
-`;
-
-// Rest of the styled components remain unchanged...
-
-
-const SectionHeader = styled.h2`
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 20px;
-  animation: fadeInLeft 1.5s ease-in-out;
-  
-  @keyframes fadeInLeft {
-    from { transform: translateX(-30px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.8rem;
-    text-align: center;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.5rem;
-  }
-`;
-
-const PodcastGrid = styled.div`
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
   justify-content: center;
-`;
-
-const PodcastCard = styled.div`
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  width: 300px;
-  animation: fadeInRight 1.5s ease-in-out;
-
-  @media (max-width: 768px) {
-    width: 45%; /* Adjust card width for tablet view */
-  }
-
-  @media (max-width: 480px) {
-    width: 100%; /* Full width cards for mobile view */
-  }
-`;
-
-
-const PodcastImage = styled.img`
   width: 100%;
-  height: 200px;
-  object-fit: cover;
-
-  @media (max-width: 480px) {
-    height: 150px;
-  }
-`;
-
-const PodcastContent = styled.div`
-  padding: 15px;
-`;
-
-const PodcastTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 10px;
+  height: 85%;
+  background-color: ${({ theme }) => theme.bgLight};
+  padding-left: 10%;
+  padding-right: 10%;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: ${({ inView }) => (inView ? fadeIn : 'none')} 1.5s ease-in-out forwards;
 
   @media (max-width: 768px) {
-    font-size: 1.3rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.2rem;
+    flex-direction: column;
+    height: auto;
+    padding: 5% 10%;
   }
 `;
 
-const PodcastDescription = styled.p`
-  font-size: 1rem;
-  color: #666;
+const TextContainer = styled.div`
+  flex: 1;
+  padding: 20px;
 
   @media (max-width: 768px) {
-    font-size: 0.9rem;
+    text-align: center;
+    padding: 10px;
   }
+`;
 
-  @media (max-width: 480px) {
-    font-size: 0.8rem;
+const ImageContainer = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: 30px;
+  margin-bottom: 80px;
+
+  @media (max-width: 576px) {
+    margin-top:10px;
+    margin-bottom:210px;
   }
+`;
+
+const InfoImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  
+  border-radius: 10px;
+  position: relative;
+  z-index: 1;
 `;
 
 const Homepage = () => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.5,
+  });
+
   return (
-    <Container>
+    <Container id="content">
       <HeroSection>
         <HeroText>
           Welcome to Podstar
@@ -218,21 +172,22 @@ const Homepage = () => {
           Get Started
         </Button>
       </HeroSection>
-      <ContentSection>
-        <SectionHeader>Popular Podcasts</SectionHeader>
-        <PodcastGrid>
-          <PodcastCard>
-            <PodcastImage src={heroImage} alt="Podcast" />
-            <PodcastContent>
-              <PodcastTitle>Podcast Title</PodcastTitle>
-              <PodcastDescription>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </PodcastDescription>
-            </PodcastContent>
-          </PodcastCard>
-          {/* Add more PodcastCards as needed */}
-        </PodcastGrid>
-      </ContentSection>
+      <InfoSection ref={ref} inView={inView}>
+        <TextContainer>
+          <p style={{ fontSize: "2.5rem", fontWeight: "bold" }}>About Podstar</p>
+          <p>
+            Podstar is your ultimate destination for discovering and enjoying the best podcasts.
+            Our application provides a seamless experience to explore, listen, and share your favorite podcasts.
+            Join us and become a part of the Podstar community today! With Podstar, you can follow your favorite
+            podcast creators and stay updated with the latest episodes. Discover new shows tailored to your interests
+            and dive into a world of engaging content. Our user-friendly interface and advanced features make it easy
+            to create playlists, download episodes for offline listening, and interact with a community of podcast enthusiasts.
+          </p>
+        </TextContainer>
+        <ImageContainer>
+          <InfoImage src={heroImage} alt="Podstar Application" />
+        </ImageContainer>
+      </InfoSection>
     </Container>
   );
 };

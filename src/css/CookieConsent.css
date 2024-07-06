@@ -25,11 +25,12 @@
     background-color: rgba(0, 0, 0, 0); /* Initially transparent */
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items:flex-start;
     z-index: 1000; /* Ensure it's above other content */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, background-color 0.3s ease;
+    transition: opacity 0.3s ease; 
+    background-color: 0.3s ease;
   }
   
   .cookieConsentOverlay.show {
@@ -117,8 +118,9 @@
   }
 
   .cookieConsentOverlay.show .cookieConsentCard {
-    top: -3%;
+    top: 57%;
     right: 58%; /* Adjust this value to position below the address bar */
+    left: 14%;
   }
   
   /* Responsive styles */
@@ -128,7 +130,7 @@
   }
   .cookieConsentOverlay.show .cookieConsentCard {
     top: 10%;
-    left: 50%;
+    left: 50% !important;
 }
 }
   

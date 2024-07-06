@@ -131,7 +131,7 @@ function App() {
                 logout={logout}
               />
               <Routes>
-                <Route path="/" element={isAuthenticated ? <Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/> : <Homepage />} />
+                <Route path="/" element={isAuthenticated ? <Dashboard setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible}/> : <Homepage darkMode={darkMode} />} />
                 <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl} darkMode={darkMode} onLogin={checkAuth} setUserlogged={setUserlogged} setMenuOpen={setMenuOpen} />} />
                 <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register darkMode={darkMode} />} />
                 <Route path="/forgot-password" element={<ForgotPassword darkMode={darkMode} />} />
