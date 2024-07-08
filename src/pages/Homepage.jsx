@@ -207,7 +207,7 @@ const OverlayText = styled.p`
   color: white;
   font-style: italic;
   font-family: 'Times New Roman', Times, serif;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   max-width: 80%;
   padding: 20px;
 `;
