@@ -16,6 +16,28 @@ const fadeIn = keyframes`
   }
 `;
 
+const videoFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const wrapperFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
 const Container = styled.div`
   width: 100%;
   min-height: 100vh;
@@ -110,7 +132,6 @@ const InfoSection = styled.div`
   background-color: ${({ theme }) => theme.bgLight};
   padding-left: 10%;
   padding-right: 10%;
-  margin-bottom: 20px;
   opacity: 0;
   transform: translateY(20px);
   animation: ${({ inView }) => (inView ? fadeIn : 'none')} 1.5s ease-in-out forwards;
@@ -142,18 +163,63 @@ const ImageContainer = styled.div`
   margin-bottom: 80px;
 
   @media (max-width: 576px) {
-    margin-top:10px;
-    margin-bottom:210px;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
 `;
 
 const InfoImage = styled.img`
   max-width: 100%;
   height: auto;
-  
   border-radius: 10px;
   position: relative;
   z-index: 1;
+`;
+
+const VideoWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio (9 / 16 * 100) */
+  overflow: hidden;
+  animation: ${({ inView }) => (inView ? wrapperFadeIn : 'none')} 2s ease-in-out;
+
+  @media (max-width: 768px) {
+    padding-top: 75%; /* Adjust for different aspect ratios or preferences */
+    // margin-bottom: 70%;
+  }
+`;
+
+const VideoOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Adjust overlay color and opacity */
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
+
+const OverlayText = styled.p`
+  color: white;
+  font-style: italic;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.5rem;
+  max-width: 80%;
+  padding: 20px;
+`;
+
+const Video = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: ${({ inView }) => (inView ? videoFadeIn : 'none')} 2s ease-in-out;
 `;
 
 const Homepage = () => {
@@ -188,6 +254,21 @@ const Homepage = () => {
           <InfoImage src={heroImage} alt="Podstar Application" />
         </ImageContainer>
       </InfoSection>
+      <VideoWrapper>
+        <VideoOverlay>
+          <OverlayText>
+            "Discover new worlds of storytelling with Podstar. Your gateway to immersive podcasts that spark imagination and stir the soul. Tune in, and let the stories unfold."
+          </OverlayText>
+        </VideoOverlay>
+        <Video
+          src="https://res.cloudinary.com/doi88vbcz/video/upload/v1720454586/8043623-uhd_4096_2160_25fps_nxqsvu.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          inView={inView}
+        />
+      </VideoWrapper>
     </Container>
   );
 };
