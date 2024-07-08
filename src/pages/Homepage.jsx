@@ -185,7 +185,7 @@ const VideoWrapper = styled.div`
 
   @media (max-width: 768px) {
     padding-top: 75%; /* Adjust for different aspect ratios or preferences */
-    // margin-bottom: 70%;
+    margin-bottom: 30%;
   }
 `;
 
