@@ -234,7 +234,7 @@ const Homepage = () => {
         <HeroText>
           Welcome to Podstar
         </HeroText>
-        <Button to="/signup">
+        <Button to="/login">
           Get Started
         </Button>
       </HeroSection>
