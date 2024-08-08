@@ -323,7 +323,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                                             <TextField required id="inputPhone" className="form-control" type="number" label="Phone Number" variant="filled" placeholder="Enter your Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
                                         </div>
                                         <div id="inpRole" className="col-md-6">
-                                            <TextField id="inputRole" className="form-control" type="text" label="Access" variant="filled" placeholder="Your Accessibility" value={role} disabled />
+                                            <TextField id="inputRole" className="form-control" type="text" label="Access Rights" variant="filled" placeholder="Your Accessibility" value={role} disabled />
                                         </div>
                                     </div>
                                     <div className="mb-3">
@@ -356,6 +356,9 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                                             }}
                                         />
                                     </div>
+                                    
+                                    
+
                                     <button className="btn btn1" type="submit">
                                         {!loading && (<div>Save Changes</div>)}
                                         {loading && (

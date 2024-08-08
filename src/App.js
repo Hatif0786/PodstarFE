@@ -155,6 +155,7 @@ function App() {
         </Router>
         {isPlayerVisible && (
           <StyledMusicPlayer
+             volumeFade={{ fadeIn: 700, fadeOut: 800 }}
             audioLists={audioLists}
             showMediaSession
             autoPlay={true}
