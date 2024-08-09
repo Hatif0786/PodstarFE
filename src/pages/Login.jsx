@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useRef} from "react";
 import "../css/login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useGoogleLogin } from "@react-oauth/google";
+import FacebookLogin from 'react-facebook-login';
 
 const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, setProfileImageUrl}) => {
   const [err, setErr] = useState("");
@@ -13,6 +15,7 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const facebookRef = useRef(null); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,6 +59,73 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
   const handleShowPassword = () => {
     setShowPassword(true);
     setTimeout(() => setShowPassword(false), 200);
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+  
+      // Extract access token from response
+      const accessToken = tokenResponse.access_token;
+      setLoader(true);
+      try {
+        // Fetch user profile using access token
+        const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const userData = await response.json();
+
+        const user = {
+          "firstName":userData.given_name,
+          "lastName":userData.family_name,
+          "email":userData.email,
+          "profileImageUrl":userData.picture
+        };
+        try{
+          const resp = await axios.post('https://podstar-1.onrender.com/api/user/signin-google', user);
+          setLoader(false);
+          if ((resp.status === 200 && resp.data.user.role==="ADMIN") || (resp.status === 200 && resp.data.user.role==="NORMAL")) {
+            //localStorage.setItem("user", JSON.stringify(resp.data.user));
+            //localStorage.setItem("token", resp.data.token);
+            const userString = JSON.stringify(resp.data.user); 
+            // Debugging line
+            Cookies.set("user", userString, {
+              sameSite: 'None',
+              secure: true,
+              expires: 1 / 24, // Set cookie expiration to 1 hour
+            });
+            Cookies.set("token", resp.data.token, {
+              sameSite: 'None',
+              secure: true,
+              expires: 1 / 24, // Set cookie expiration to 1 hour
+            });
+            setUserlogged(true);
+            onLogin();
+            setProfileImageUrl(resp.data.user.profileImageUrl);
+            navigate("/dashboard");
+          }
+        }catch (error) {
+          if (error.response && error.response.status === 409) {
+            setLoader(false);
+            setErr("Bad Credentials, Try Again!!");
+          }
+        }
+        // Now you can use userData which contains information like email, name, etc.
+      } catch (error) {
+        console.error("Error fetching user data: ", error);
+      }
+    },
+    onError: (errorResponse) => {
+      console.error("Google Login Error: ", errorResponse);
+    },
+  });
+
+
+  const responseFacebook = (response) => {
+    console.log("Facebook response: ", response);
+    // Handle Facebook login response
   };
 
   return (
@@ -167,21 +237,21 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
               <div className="flex-row">
                 <div>
                   <input type="checkbox" />
-                  <label>Remember me </label>
+                  <label style={{marginLeft:"2px"}}>Remember me </label>
                 </div>
                 <Link to="/forgot-password" className="span">Forgot password?</Link>
               </div>
               <button className="button-submit">Sign In</button>
               <p className="p">
                 Don't have an account?{" "}
-                <Link to="/signup" className="span">
+                <Link to="/signup"  className="span">
                   Sign Up
                 </Link>
               </p>
               <p className="p line">Or With</p>
 
               <div className="flex-row">
-                <button className="btn google">
+              <button className="btn google" type="button" onClick={() => googleLogin()}>
                   <svg
                     version="1.1"
                     width="20"
@@ -220,7 +290,37 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
                   </svg>
                   Google
                 </button>
-                <button className="btn apple">
+                <FacebookLogin
+                  appId="803928975188833"
+                  autoLoad={false}
+                  textButton="Facebook"
+                  fields="name,email,picture"
+                  callback={responseFacebook}
+                  cssClass="btn facebook"
+                  icon={<svg
+                    version="1.1"
+                    height="20"
+                    width="20"
+                    id="Capa_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    x="0px"
+                    y="0px"
+                    viewBox="0 0 24 24"
+                    style={{ enableBackground: "new 0 0 24 24" }}
+                    xmlSpace="preserve"
+                  >
+                    <g>
+                      <path
+                        d="M22.675,0H1.325C0.592,0,0,0.592,0,1.325v21.351C0,23.408,0.592,24,1.325,24h11.495v-9.294H9.364v-3.622h3.456V8.629c0-3.42,2.091-5.276,5.15-5.276c1.464,0,2.717,0.109,3.079,0.159v3.564l-2.112,0.001c-1.652,0-1.97,0.785-1.97,1.94v2.544h3.944l-0.515,3.622h-3.429V24h6.488c0.733,0,1.325-0.592,1.325-1.325V1.325C24,0.592,23.408,0,22.675,0z"
+                        fill="#1877F2" // Blue color
+                      />
+                    </g>
+                  </svg>}
+                  ref={facebookRef}
+                />
+
+
+                {/* <button className="btn apple" type="button" onClick={handleAppleClick}>
                   <svg
                     version="1.1"
                     height="20"
@@ -244,7 +344,7 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
                     </g>
                   </svg>
                   Apple
-                </button>
+                </button> */}
               </div>
             </form>{" "}
           </div>
