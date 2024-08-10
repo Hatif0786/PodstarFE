@@ -194,6 +194,11 @@ scrollbar-width: none;  /* Firefox */
   .p {
     font-size: 12px;
   }
+
+  .facebook{
+    padding-left: 35px;
+    padding-right: 35px;
+  }
 }
 
 .error{
