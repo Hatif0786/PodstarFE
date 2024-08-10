@@ -123,9 +123,42 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
   });
 
 
-  const responseFacebook = (response) => {
-    console.log("Facebook response: ", response);
-    // Handle Facebook login response
+  const responseFacebook = async (response) => {
+    
+    const user = {
+      "name":response.name,
+      "email":response.email,
+      "profileImageUrl":response.picture.data.url
+    };
+    try{
+      const resp = await axios.post('http://localhost:5000/api/user/signin-facebook', user);
+      setLoader(false);
+      if ((resp.status === 200 && resp.data.user.role==="ADMIN") || (resp.status === 200 && resp.data.user.role==="NORMAL")) {
+        //localStorage.setItem("user", JSON.stringify(resp.data.user));
+        //localStorage.setItem("token", resp.data.token);
+        const userString = JSON.stringify(resp.data.user); 
+        // Debugging line
+        Cookies.set("user", userString, {
+          sameSite: 'None',
+          secure: true,
+          expires: 1 / 24, // Set cookie expiration to 1 hour
+        });
+        Cookies.set("token", resp.data.token, {
+          sameSite: 'None',
+          secure: true,
+          expires: 1 / 24, // Set cookie expiration to 1 hour
+        });
+        setUserlogged(true);
+        onLogin();
+        setProfileImageUrl(resp.data.user.profileImageUrl);
+        navigate("/dashboard");
+      }
+    }catch (error) {
+      if (error.response && error.response.status === 409) {
+        setLoader(false);
+        setErr("Bad Credentials, Try Again!!");
+      }
+    }
   };
 
   return (
