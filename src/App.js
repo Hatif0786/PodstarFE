@@ -177,7 +177,7 @@ function App() {
         <CookieConsent />
       </ThemeProvider>
     </MusicPlayerContext.Provider>
-  );
+  )
 }
 
 export default App;

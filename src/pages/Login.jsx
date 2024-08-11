@@ -110,6 +110,9 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
           if (error.response && error.response.status === 409) {
             setLoader(false);
             setErr("Bad Credentials, Try Again!!");
+          }else if(error.response && error.response.status === 401){
+            setLoader(false);
+            setErr("User Already Exists, Please try with credentials!!");
           }
         }
         // Now you can use userData which contains information like email, name, etc.
@@ -124,7 +127,7 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
 
 
   const responseFacebook = async (response) => {
-    
+    setLoader(true);
     const user = {
       "name":response.name,
       "email":response.email,
@@ -157,6 +160,9 @@ const Login = ({darkMode, setMenuOpen, profileImageUrl, setUserlogged, onLogin, 
       if (error.response && error.response.status === 409) {
         setLoader(false);
         setErr("Bad Credentials, Try Again!!");
+      }else if(error.response && error.response.status === 401){
+        setLoader(false);
+        setErr("User Already Exists, Please try with credentials!!");
       }
     }
   };

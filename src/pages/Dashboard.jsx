@@ -437,7 +437,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
         </div>
       )}
     </>
-  );
-});
+  )
+})
 
-export default Dashboard;
+export default Dashboard
