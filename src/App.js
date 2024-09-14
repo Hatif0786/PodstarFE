@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import ProtectedRoute from '../src/utils/ProtectedRoute';  // Import the ProtectedRoute component
 import Announcement from "./components/Announcement";
+import Statistics from "./pages/Statistics";
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
 
@@ -143,6 +144,7 @@ function App() {
                     <Route path="/favourite" element={<ProtectedRoute><Favourite setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
                     <Route path="/history" element={<ProtectedRoute><History darkMode={darkMode} setPlayerVisible={setPlayerVisible} logout={logout} setUserlogged={setUserlogged} setMenuOpened={setMenuOpened}/></ProtectedRoute>} />
                     <Route path="/upload-audio" element={<ProtectedRoute><UploadPodcastAudio setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
+                    <Route path="/stats" element={<ProtectedRoute><Statistics setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} menuOpened={menuOpened} setPlayerVisible={setPlayerVisible}/></ProtectedRoute>} />
                     <Route path="*" element={<NotFound darkMode={darkMode} />} />
                     <Route path="/profile" element={<ProtectedRoute><Profile darkMode={darkMode} setIsVerified={setIsVerified} setMenuOpened={setMenuOpened} logout={logout} setUserlogged={setUserlogged} setPlayerVisible={setPlayerVisible} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl}/></ProtectedRoute>} />
                   </>

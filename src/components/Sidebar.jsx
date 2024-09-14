@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import { HomeRounded, CloseRounded, SearchRounded, FavoriteRounded, LightModeRounded, LogoutRounded, DarkModeRounded, CloudUploadRounded, ManageAccountsRounded, HistoryRounded} from "@mui/icons-material";
+import { HomeRounded, CloseRounded, SearchRounded, FavoriteRounded, LightModeRounded, LogoutRounded, DarkModeRounded, CloudUploadRounded, ManageAccountsRounded, HistoryRounded, InsightsRounded} from "@mui/icons-material";
 import styled from 'styled-components';
 import logo from "../Images/Logo.png";
 import { Link } from 'react-router-dom';
@@ -154,6 +154,15 @@ const Sidebar = ({ menuOpen, setMenuOpen, setDarkMode, darkMode, logout, setUser
       visible: userRole === "ADMIN" // Show only if user role is ADMIN
     },
     {
+      fun: () => {
+        setMenuOpen(false);
+        navigate("/stats")
+      },
+      name: "Statistics",
+      icon: <InsightsRounded />,
+      visible: userRole === "ADMIN" // Show only if user role is ADMIN
+    }
+    ,{
       fun: toggleDarkMode,
       name: darkMode ? "Light Mode" : "Dark Mode",
       icon: darkMode ? <LightModeRounded /> : <DarkModeRounded />,

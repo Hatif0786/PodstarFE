@@ -1,0 +1,9 @@
+.statsContainer{
+    overflow-y: scroll; /* Enable scrolling */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none;
+}
+
+.statsContainer::-webkit-scrollbar {
+    width: 0;  /* For Chrome, Safari, and Opera */
+  }
