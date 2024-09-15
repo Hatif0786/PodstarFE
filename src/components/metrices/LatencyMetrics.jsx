@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, LinearScale, CategoryScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, PointElement, LinearScale, CategoryScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
 import Cookies from 'js-cookie'; // To handle cookies
 
 // Register required Chart.js components
-ChartJS.register(LinearScale, CategoryScale, LineElement, Title, Tooltip, Legend);
+ChartJS.register(LinearScale, CategoryScale, LineElement, PointElement, Title, Tooltip, Legend);
 
 const fetchApiData = async (token) => {
   const startTime = performance.now(); // Start timer

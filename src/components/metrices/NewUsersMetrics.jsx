@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, PointElement} from "chart.js";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, PointElement, Tooltip, Legend);
 
 const MetricsDoughnutChart = ({ dataPoints, title }) => {
   const data = {

@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend, PointElement} from 'chart.js';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+
+// Register the necessary components for the Bar chart
+Chart.register(
+  PointElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
 const fetchErrorMetrics = async (token) => {
   try {
     const response = await axios.get('https://podstar-1.onrender.com/api/metrics/errors', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching error metrics:', error);
@@ -38,7 +49,13 @@ const ErrorMetricsChart = () => {
     datasets: [
       {
         label: 'Error Counts',
-        data: [errorData['404'] || 0, errorData['500'] || 0, errorData['409'] || 0, errorData['400'] || 0, errorData['403'] || 0],
+        data: [
+          errorData['404'] || 0,
+          errorData['500'] || 0,
+          errorData['409'] || 0,
+          errorData['400'] || 0,
+          errorData['403'] || 0
+        ],
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
@@ -58,7 +75,7 @@ const ErrorMetricsChart = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             let label = context.dataset.label || '';
             if (label) {
               label += ': ';
@@ -67,9 +84,9 @@ const ErrorMetricsChart = () => {
               label += context.parsed.y;
             }
             return label;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     scales: {
       y: {
@@ -95,9 +112,9 @@ const ErrorMetricsChart = () => {
   };
 
   return (
-    <div className='container text-center' style={{ width: '90%', maxWidth: '800px', paddingTop:"0 !important" }}>
-      <h5 style={{marginBottom:"80px"}}>Error Metrics</h5>
-      <Bar style={{marginBottom:"70px"}} data={data} options={options} />
+    <div className='container text-center' style={{ width: '90%', maxWidth: '800px', paddingTop: "0 !important" }}>
+      <h5 style={{ marginBottom: "80px" }}>Error Metrics</h5>
+      <Bar style={{ marginBottom: "70px" }} data={data} options={options} />
     </div>
   );
 };
