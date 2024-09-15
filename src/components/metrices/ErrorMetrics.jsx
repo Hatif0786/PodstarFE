@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 
 const fetchErrorMetrics = async (token) => {
   try {
-    const response = await axios.get('http://localhost:5000/api/metrics/errors', {
+    const response = await axios.get('https://podstar-1.onrender.com/api/metrics/errors', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

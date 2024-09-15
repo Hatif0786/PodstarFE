@@ -7,7 +7,7 @@ import Cookies from 'js-cookie'; // To handle cookies
 const fetchApiData = async (token) => {
   const startTime = performance.now(); // Start timer
   try {
-    const response = await axios.get('http://localhost:5000/api/metrics/total-users', {
+    const response = await axios.get('https://podstar-1.onrender.com/api/metrics/total-users', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
