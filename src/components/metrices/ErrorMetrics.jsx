@@ -96,8 +96,8 @@ const ErrorMetricsChart = () => {
 
   return (
     <div className='container text-center' style={{ width: '90%', maxWidth: '800px', paddingTop:"0 !important" }}>
-      <h5 style={{ marginBottom: '80px', marginBottom:"70px"}}>Error Metrics</h5>
-      <Bar style={{marginBottom:"55px"}} data={data} options={options} />
+      <h5 style={{marginBottom:"80px"}}>Error Metrics</h5>
+      <Bar style={{marginBottom:"70px"}} data={data} options={options} />
     </div>
   );
 };

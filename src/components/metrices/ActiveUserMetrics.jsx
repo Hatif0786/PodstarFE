@@ -43,51 +43,6 @@ const ActiveUserMetrics = ({
     }
   }, [logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged]);
 
-  const fetchActiveUsers = useCallback(async () => {
-    if (!Cookies.get("token")) {
-      logout();
-      setPlayerVisible(false);
-      setMenuOpened(false);
-      setUserlogged(false);
-      navigate("/login");
-      return;
-    }
-    let url = "";
-    switch (selectedRange) {
-      case "lastDay":
-        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastDay";
-        break;
-      case "lastWeek":
-        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastWeek";
-        break;
-      case "lastMonth":
-        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastMonth";
-        break;
-      case "lastYear":
-        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastYear";
-        break;
-      default:
-        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastDay";
-    }
-
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
-
-      const activeUsers = response.data;
-
-      if (onActiveUsersChange) onActiveUsersChange(activeUsers);
-
-      // Fetch the previous period signups for comparison
-      fetchPreviousActiveUsers(activeUsers);
-    } catch (error) {
-      console.error("Error fetching active users:", error);
-    }
-  }, [selectedRange, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onActiveUsersChange]);
-
   const fetchPreviousActiveUsers = useCallback(async (currentActive) => {
     if (!Cookies.get("token")) {
       logout();
@@ -132,16 +87,68 @@ const ActiveUserMetrics = ({
 
       if (onPreviousActiveUsersChange) onPreviousActiveUsersChange(percentageChange);
     } catch (error) {
-      console.error("Error fetching previous user signups:", error);
+      console.error("Error fetching previous active users:", error);
     }
   }, [selectedRange, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onPreviousActiveUsersChange]);
 
+  const fetchActiveUsers = useCallback(async () => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+    let url = "";
+    switch (selectedRange) {
+      case "lastDay":
+        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastDay";
+        break;
+      case "lastWeek":
+        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastWeek";
+        break;
+      case "lastMonth":
+        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastMonth";
+        break;
+      case "lastYear":
+        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastYear";
+        break;
+      default:
+        url = "https://podstar-1.onrender.com/api/metrics/active-users?range=lastDay";
+    }
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+
+      const activeUsers = response.data;
+
+      if (onActiveUsersChange) onActiveUsersChange(activeUsers);
+
+      // Fetch the previous period active users for comparison
+      fetchPreviousActiveUsers(activeUsers);
+    } catch (error) {
+      console.error("Error fetching active users:", error);
+    }
+  }, [selectedRange, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onActiveUsersChange, fetchPreviousActiveUsers]);
+
   useEffect(() => {
+    // Create a debounced version of fetchActiveUsers
+    const debouncedFetchActiveUsers = debounce(fetchActiveUsers, 500);
+
     if (totalUsers > 0) {
-      const debouncedFetchActiveUsers = debounce(fetchActiveUsers, 500); // Adjust delay as needed
       debouncedFetchActiveUsers();
     }
-  }, [selectedRange, totalUsers, fetchActiveUsers]);
+
+    // Cleanup the debounce function on unmount
+    return () => {
+      debouncedFetchActiveUsers.cancel && debouncedFetchActiveUsers.cancel();
+    };
+  }, [totalUsers, selectedRange, fetchActiveUsers]);
 
   useEffect(() => {
     fetchTotalUsers();

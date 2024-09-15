@@ -77,55 +77,6 @@ const NewUsersMetrics = ({
     }
   }, [logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged]);
 
-  const fetchNewUserSignups = useCallback(async () => {
-    if (!Cookies.get("token")) {
-      logout();
-      setPlayerVisible(false);
-      setMenuOpened(false);
-      setUserlogged(false);
-      navigate("/login");
-      return;
-    }
-
-    let url = "";
-    switch (selectedRange) {
-      case "lastDay":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
-        break;
-      case "lastWeek":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastWeek";
-        break;
-      case "lastMonth":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastMonth";
-        break;
-      case "lastYear":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastYear";
-        break;
-      default:
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
-    }
-
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
-
-      const newUserSignups = response.data;
-      const signupPercentage = totalUsers > 0 ? (newUserSignups / totalUsers) * 100 : 0;
-      const remainingPercentage = 100 - signupPercentage;
-
-      setDoughnutData([signupPercentage, remainingPercentage]);
-      if (onNewUserSignupsChange) onNewUserSignupsChange(newUserSignups);
-
-      // Fetch the previous period signups for comparison
-      fetchNewUserPreviousSignups(newUserSignups);
-    } catch (error) {
-      console.error("Error fetching new user signups:", error);
-    }
-  }, [selectedRange, totalUsers, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onNewUserSignupsChange]);
-
   const fetchNewUserPreviousSignups = useCallback(async (currentSignups) => {
     if (!Cookies.get("token")) {
       logout();
@@ -173,6 +124,56 @@ const NewUsersMetrics = ({
       console.error("Error fetching previous user signups:", error);
     }
   }, [selectedRange, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onPreviousUsersChange]);
+
+  const fetchNewUserSignups = useCallback(async () => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+
+    let url = "";
+    switch (selectedRange) {
+      case "lastDay":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
+        break;
+      case "lastWeek":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastWeek";
+        break;
+      case "lastMonth":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastMonth";
+        break;
+      case "lastYear":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastYear";
+        break;
+      default:
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
+    }
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+
+      const newUserSignups = response.data;
+      const signupPercentage = totalUsers > 0 ? (newUserSignups / totalUsers) * 100 : 0;
+      const remainingPercentage = 100 - signupPercentage;
+
+      setDoughnutData([signupPercentage, remainingPercentage]);
+      if (onNewUserSignupsChange) onNewUserSignupsChange(newUserSignups);
+
+      // Fetch the previous period signups for comparison
+      fetchNewUserPreviousSignups(newUserSignups);
+    } catch (error) {
+      console.error("Error fetching new user signups:", error);
+    }
+  }, [selectedRange, totalUsers, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onNewUserSignupsChange, fetchNewUserPreviousSignups]);
+
 
   useEffect(() => {
     fetchTotalUsers();
