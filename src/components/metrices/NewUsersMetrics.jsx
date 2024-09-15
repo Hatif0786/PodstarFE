@@ -52,37 +52,80 @@ const NewUsersMetrics = ({
   const [totalUsers, setTotalUsers] = useState(0);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchTotalUsers = async () => {
-      if (!Cookies.get("token")) {
-        logout();
-        setPlayerVisible(false);
-        setMenuOpened(false);
-        setUserlogged(false);
-        navigate("/login");
-        return;
-      }
+  const fetchTotalUsers = useCallback(async () => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
 
-      try {
-        const response = await axios.get(
-          "https://podstar-1.onrender.com/api/metrics/total-users",
-          {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
-        );
-        const total = response.data;
-        setTotalUsers(total);
-      } catch (error) {
-        console.error("Error fetching total users:", error);
-      }
-    };
-
-    fetchTotalUsers();
+    try {
+      const response = await axios.get(
+        "https://podstar-1.onrender.com/api/metrics/total-users",
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      setTotalUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching total users:", error);
+    }
   }, [logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged]);
 
-  // Memoize fetchNewUserPreviousSignups
+  const fetchNewUserSignups = useCallback(async () => {
+    if (!Cookies.get("token")) {
+      logout();
+      setPlayerVisible(false);
+      setMenuOpened(false);
+      setUserlogged(false);
+      navigate("/login");
+      return;
+    }
+
+    let url = "";
+    switch (selectedRange) {
+      case "lastDay":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
+        break;
+      case "lastWeek":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastWeek";
+        break;
+      case "lastMonth":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastMonth";
+        break;
+      case "lastYear":
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastYear";
+        break;
+      default:
+        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
+    }
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+
+      const newUserSignups = response.data;
+      const signupPercentage = totalUsers > 0 ? (newUserSignups / totalUsers) * 100 : 0;
+      const remainingPercentage = 100 - signupPercentage;
+
+      setDoughnutData([signupPercentage, remainingPercentage]);
+      if (onNewUserSignupsChange) onNewUserSignupsChange(newUserSignups);
+
+      // Fetch the previous period signups for comparison
+      fetchNewUserPreviousSignups(newUserSignups);
+    } catch (error) {
+      console.error("Error fetching new user signups:", error);
+    }
+  }, [selectedRange, totalUsers, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onNewUserSignupsChange]);
+
   const fetchNewUserPreviousSignups = useCallback(async (currentSignups) => {
     if (!Cookies.get("token")) {
       logout();
@@ -92,6 +135,7 @@ const NewUsersMetrics = ({
       navigate("/login");
       return;
     }
+
     let url = "";
     switch (selectedRange) {
       case "lastDay":
@@ -120,10 +164,9 @@ const NewUsersMetrics = ({
       const previousUserSignups = response.data;
 
       // Calculate percentage change (+ or -)
-      const percentageChange =
-        previousUserSignups > 0
-          ? ((currentSignups - previousUserSignups) / previousUserSignups) * 100
-          : 0;
+      const percentageChange = previousUserSignups > 0
+        ? ((currentSignups - previousUserSignups) / previousUserSignups) * 100
+        : 0;
 
       if (onPreviousUsersChange) onPreviousUsersChange(percentageChange);
     } catch (error) {
@@ -131,55 +174,9 @@ const NewUsersMetrics = ({
     }
   }, [selectedRange, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onPreviousUsersChange]);
 
-  // Memoize fetchNewUserSignups and include fetchNewUserPreviousSignups in the dependency array
-  const fetchNewUserSignups = useCallback(async () => {
-    if (!Cookies.get("token")) {
-      logout();
-      setPlayerVisible(false);
-      setMenuOpened(false);
-      setUserlogged(false);
-      navigate("/login");
-      return;
-    }
-    let url = "";
-    switch (selectedRange) {
-      case "lastDay":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
-        break;
-      case "lastWeek":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastWeek";
-        break;
-      case "lastMonth":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastMonth";
-        break;
-      case "lastYear":
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastYear";
-        break;
-      default:
-        url = "https://podstar-1.onrender.com/api/metrics/new-user-signups?range=lastDay";
-    }
-
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
-
-      const newUserSignups = response.data;
-      const signupPercentage =
-        totalUsers > 0 ? (newUserSignups / totalUsers) * 100 : 0;
-      const remainingPercentage = 100 - signupPercentage;
-
-      setDoughnutData([signupPercentage, remainingPercentage]);
-      if (onNewUserSignupsChange) onNewUserSignupsChange(newUserSignups);
-
-      // Fetch the previous period signups for comparison
-      fetchNewUserPreviousSignups(newUserSignups);
-    } catch (error) {
-      console.error("Error fetching new user signups:", error);
-    }
-  }, [selectedRange, totalUsers, logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, onNewUserSignupsChange, fetchNewUserPreviousSignups]);
+  useEffect(() => {
+    fetchTotalUsers();
+  }, [fetchTotalUsers]);
 
   useEffect(() => {
     if (totalUsers > 0) {

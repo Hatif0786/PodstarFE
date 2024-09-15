@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Grid, Box, Paper, Typography } from '@mui/material';
-import {ShoppingCartRounded, GroupsRounded, EmojiPeopleRounded} from '@mui/icons-material'; // Example icon, you can customize as per your need
+import { AvTimerRounded, GroupsRounded, EmojiPeopleRounded, HeadsetRounded } from '@mui/icons-material'; // Example icon, you can customize as per your need
 import NewUsersMetrics from '../components/metrices/NewUsersMetrics';
 import "../css/Statistics.css";
 import ActiveUserMetrics from '../components/metrices/ActiveUserMetrics';
+import LatencyChart from '../components/metrices/LatencyMetrics';
+import ErrorMetricsChart from '../components/metrices/ErrorMetrics';
 
 // Reusable Card Component for Top Metrics
 const StatCard = ({ title, value, percentage, icon }) => {
@@ -54,10 +56,10 @@ const Statistics = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible, da
           {/* First Card */}
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
-              title="Sales Turnover"
-              value="RP. 3,600,000"
+              title="Podcast Played"
+              value="100+"
               percentage={-13.8}
-              icon={<ShoppingCartRounded sx={{ fontSize: 40, color: 'green' }} />} // Example icon
+              icon={<HeadsetRounded sx={{ fontSize: 40, color:"violet" }} />} // Example icon
             />
           </Grid>
 
@@ -84,10 +86,10 @@ const Statistics = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible, da
           {/* Fourth Card */}
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
-              title="Churn Rate"
+              title="Avg. User Engagement"
               value="5%"
               percentage={-1.2}
-              icon={<ShoppingCartRounded sx={{ fontSize: 40, color: 'red' }} />} // Replace icon
+              icon={<AvTimerRounded sx={{ fontSize: 40, color: 'red' }} />} // Replace icon
             />
           </Grid>
         </Grid>
@@ -160,21 +162,46 @@ const Statistics = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible, da
                 maxWidth: '100%',  // Ensure it is responsive to container size
               }}
             >
-              {/* Pass the selected time range and other props to NewUsersMetrics */}
-              <ActiveUserMetrics 
+              <LatencyChart 
                 selectedRange={selectedRange} 
                 setMenuOpened={setMenuOpened} 
                 logout={logout} 
                 setUserlogged={setUserlogged} 
                 setPlayerVisible={setPlayerVisible} 
                 darkMode={darkMode} 
-                onPreviousUsersChange={handlePreviousUsersChange}
-                onNewUserSignupsChange={handleNewUserSignupsChange}
               />
             </Paper>
           </Grid>
 
           <Grid item xs={12} sm={6} md={4}>
+            <Paper 
+              elevation={4} // Slight shadow for the popping-out effect
+              sx={{
+                padding: '10px', // More padding for a cleaner look
+                borderRadius: '12px', // Smooth corners
+                marginBottom: '24px', // Spacing between cards
+                backgroundColor: '#fff', 
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '350px', // Increased height for better readability
+                minWidth: '320px', // Medium size width
+                maxWidth: '100%',  // Ensure it is responsive to container size
+              }}
+            >
+              {/* Pass the selected time range and other props to NewUsersMetrics */}
+              <ErrorMetricsChart 
+                selectedRange={selectedRange} 
+                setMenuOpened={setMenuOpened} 
+                logout={logout} 
+                setUserlogged={setUserlogged} 
+                setPlayerVisible={setPlayerVisible} 
+                darkMode={darkMode} 
+              />
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4} style={{display:"none"}}>
             <Paper 
               elevation={4} // Slight shadow for the popping-out effect
               sx={{
@@ -203,6 +230,8 @@ const Statistics = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible, da
               />
             </Paper>
           </Grid>
+
+          
         </Grid>
       </Box>
     </div>
