@@ -172,7 +172,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       return;
     }
     try {
-      await axios.post(
+      const result = await axios.post(
         `https://podstar-1.onrender.com/api/user/recently-played?id=${item.id}`,
         {},
         {
@@ -181,6 +181,8 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
           },
         }
       );
+      console.log(result);
+      
     } catch (error) {
       console.log(error);
     }
