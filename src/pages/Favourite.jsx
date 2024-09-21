@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import React, { memo, useState, useEffect, useCallback, useContext } from 'react';
 import Cookies from "js-cookie";
 import axios from 'axios';
 import "../utils/Themes";
@@ -9,47 +9,80 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-// import { MusicPlayerContext } from "../App";
-import "../css/Favorites.css"
+import { MusicPlayerContext } from "../App";
+import "../css/Favorites.css";
 import { DeleteRounded } from '@mui/icons-material';
 
 const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible, darkMode }) => {
   const [loader, setLoader] = useState(true);
   const [favorites, setFavorites] = useState([]);
   const navigate = useNavigate();
-  // const { handlePlay } = useContext(MusicPlayerContext);
+  const { handlePlay } = useContext(MusicPlayerContext);
 
-  const deleteFromFavorites = useCallback(async (item) => {
+  const validateTokenAndNavigate = useCallback(() => {
     if (!Cookies.get("token")) {
       logout();
       setPlayerVisible(false);
       setMenuOpened(false);
       setUserlogged(false);
       navigate("/login");
-      return;
+      return false;
     }
+    return true;
+  }, [logout, setMenuOpened, setPlayerVisible, setUserlogged, navigate]);
+
+  const addToRecentlyPlayed = useCallback(async (item) => {
+    if (!validateTokenAndNavigate()) return;
 
     try {
-      const response = await axios.delete(`https://podstar-1.onrender.com/api/user/favorites?id=${item.id}`, {
+      const response = await axios.post(
+        `https://podstar-1.onrender.com/api/user/recently-played?id=${item.id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      // The response can be used if needed for UI updates
+    } catch (error) {
+      console.error('Error adding to recently played:', error);
+    }
+  }, [validateTokenAndNavigate]);
+
+  const handleCardClick = useCallback((item) => {
+    if (!validateTokenAndNavigate()) return;
+
+    // Add to Recently Played and trigger playback
+    addToRecentlyPlayed(item);
+    handlePlay(item);
+  }, [validateTokenAndNavigate, addToRecentlyPlayed, handlePlay]);
+
+  const deleteFromFavorites = useCallback(async (item) => {
+    if (!validateTokenAndNavigate()) return;
+
+    const originalFavorites = [...favorites];
+    setFavorites(favorites.filter(fav => fav.id !== item.id));
+
+    try {
+      const response = await axios.delete(`https://podstar-1.onrender.com/api/user/remove-favourite?id=${item.id}`, {
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,
         }
       });
-      setFavorites(response.data);
+
+      if (response.data !== "Album removed from favourites!") {
+        // Revert the deletion if unsuccessful
+        setFavorites(originalFavorites);
+      }
     } catch (error) {
-      console.error('Error deleting item from favorites:', error);
+      setFavorites(originalFavorites); // Restore in case of error
+      console.error('Error removing from favorites:', error);
     }
-  }, [logout, setPlayerVisible, setMenuOpened, setUserlogged, navigate]);
+  }, [validateTokenAndNavigate, favorites]);
 
   const fetchFavoriteResults = useCallback(async () => {
-    if (!Cookies.get("token")) {
-      logout();
-      setPlayerVisible(false);
-      setMenuOpened(false);
-      setUserlogged(false);
-      navigate("/login");
-      return;
-    }
+    if (!validateTokenAndNavigate()) return;
 
     try {
       const response = await axios.get(`https://podstar-1.onrender.com/api/user/favourite-albums`, {
@@ -57,22 +90,20 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      const data = response.data;
-      setFavorites(data);
+      setFavorites(response.data);
       setLoader(false);
     } catch (error) {
       console.error('Error fetching favorite results:', error);
       setLoader(false);
     }
-  }, [logout, setPlayerVisible, setMenuOpened, setUserlogged, navigate]);
+  }, [validateTokenAndNavigate]);
 
   useEffect(() => {
     fetchFavoriteResults();
   }, [fetchFavoriteResults]);
 
   const truncateText = (text, maxLength) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
+    return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
   };
 
   return (
@@ -88,9 +119,7 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       ) : (
         <div className="favorites-content">
           <h1 className="favorites-title"><b>Favourites</b></h1>
-          <Box
-            className="favorites-grid"
-          >
+          <Box className="favorites-grid">
             {favorites.map((item, index) => (
               <Card 
                 key={index} 
@@ -105,21 +134,25 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
                   boxShadow: 3,
                   position: 'relative', 
                 }}
+                onClick={() => handleCardClick(item)}
               >
                 <div 
                   style={{
                     position: 'absolute',
                     top: '10px',
                     right: '10px',
-                    background: 'rgba(0, 0, 0, 0.5)', // Hazzy black overlay
+                    background: 'rgba(0, 0, 0, 0.5)', // Hazy black overlay
                     borderRadius: '50%',
                     padding: '3px',
                     cursor: 'pointer',
                   }}
                 >
                   <IconButton 
-                    onClick={() => deleteFromFavorites(item)} 
-                    style={{ color: '#fff', padding:'4px' }} // White icon color
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click from triggering
+                      deleteFromFavorites(item);
+                    }} 
+                    style={{ color: '#fff', padding:'4px' }}
                   >
                     <DeleteRounded fontSize="small"/>
                   </IconButton>
