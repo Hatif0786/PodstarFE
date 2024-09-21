@@ -109,7 +109,7 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
   return (
     <div className="favorites-container">
       {loader ? (
-        <section className="loader-container">
+        <section className="dots-container">
           <div className="dot"></div>
           <div className="dot"></div>
           <div className="dot"></div>
