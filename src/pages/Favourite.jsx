@@ -35,7 +35,7 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     if (!validateTokenAndNavigate()) return;
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `https://podstar-1.onrender.com/api/user/recently-played?id=${item.id}`,
         {},
         {
