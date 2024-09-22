@@ -5,12 +5,13 @@ import Cookies from "js-cookie";
 import "../css/Dashboard.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MusicPlayerContext } from "../App"; // Import the context
+import { FavoriteAlbumContext } from "../utils/Contexts/FavoriteAlbumContext";
 
 const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible }) => {
   const [loader, setLoader] = useState(true);
   const [categories, setCategories] = useState([]);
   const [categoryData, setCategoryData] = useState({});
-  const [favouriteAlbum, setFavouriteAlbum] = useState([]);
+  const [favouriteAlbum, setFavouriteAlbum] = useContext(FavoriteAlbumContext);
   const navigate = useNavigate();
   const location = useLocation();
   const { handlePlay } = useContext(MusicPlayerContext); // Use the context
@@ -56,7 +57,7 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       navigate("/login");
       return [];
     }
-
+  
     try {
       const response = await axios.get(
         "https://podstar-1.onrender.com/api/user/favourite-albums",
@@ -73,7 +74,8 @@ const Dashboard = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       console.error('Error fetching user favorites:', error);
       return [];
     }
-  }, [logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged]);
+  }, [logout, navigate, setMenuOpened, setPlayerVisible, setUserlogged, setFavouriteAlbum]);
+  
 
   const fetchCategoryData = useCallback(async (categories) => {
     if (!Cookies.get("token")) {

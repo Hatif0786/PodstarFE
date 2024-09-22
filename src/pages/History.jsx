@@ -14,14 +14,20 @@ import { FavoriteRounded, MoreVertRounded, ThumbUpAltRounded, ThumbDownAltRounde
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { MusicPlayerContext } from "../App";
+import { FavoriteAlbumContext } from '../utils/Contexts/FavoriteAlbumContext';
 
 const History = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible, darkMode }) => {
   const [loader, setLoader] = useState(true);
   const [results, setResults] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [favorites] = useContext(FavoriteAlbumContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const navigate = useNavigate();
   const { handlePlay } = useContext(MusicPlayerContext);
+
+  const isFavorite = (item) => {
+    return favorites.some(fav => fav.id === item.id);
+  };
 
   const addToRecentlyPlayed = useCallback(async (item) => {
     if (!Cookies.get("token")) {
@@ -158,6 +164,58 @@ const History = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible, 
                 borderRadius:'18px'
               }}
             >
+              <div className="card-media-wrapper">
+                <CardMedia
+                  component="img"
+                  className="card-media"
+                  image={result.thumbnailUrl}
+                  alt={result.name}
+                  style={{objectFit:"unset"}}
+                  sx={{ width: { xs: '100%', sm: '171px' }, height: { xs: 'auto', sm: '151px' } }}
+                />
+                {/* Fading effect over image */}
+                <div className="card-media-overlay" />
+              </div>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }} onClick={() => handleCardClick(result)}>
+                <CardContent sx={{ flex: '1 0 auto' }}>
+                  <Typography className='text' component="div" variant="h5" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
+                    <b>{result.name}</b>
+                  </Typography>
+                  <Typography className='text' variant="subtitle1" color="text.secondary" component="div" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
+                    {truncateText(result.description, 50)}
+                  </Typography>
+                </CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', pl: 1, pb: 1 }}>
+                  {!isFavorite(result) && (<IconButton aria-label="favorite" style={{ color: darkMode ? '#F2F3F4' : '#111111' }}>
+                    <FavoriteRounded sx={{ height: 30, width: 30 }} />
+                  </IconButton>)}
+                  {isFavorite(result) && (
+                    <IconButton style={{ color: 'red' }}>
+                      <svg
+                        width="30px"
+                        height="26px"
+                        viewBox="0 0 24 24"
+                        fill="red"
+                        stroke="red"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="feather feather-heart"
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                      </svg>
+                    </IconButton>
+                  )}
+                  <IconButton aria-label="play/pause" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
+                    <ThumbUpAltRounded sx={{ height: 30, width: 30 }} />
+                  </IconButton>
+                  <IconButton aria-label="next" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
+                    <ThumbDownAltRounded sx={{ height: 30, width: 30 }} />
+                  </IconButton>
+                </Box>
+              </Box>
+
               <div className="icon-button-container">
                 <IconButton 
                   aria-label="menu" 
@@ -188,35 +246,6 @@ const History = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible, 
                   </MenuItem>
                 </Menu>
               </div>
-
-              <CardMedia
-                component="img"
-                className="card-media"
-                image={result.thumbnailUrl}
-                alt={result.name}
-                sx={{ width: { xs: '100%', sm: '151px' }, height: { xs: 'auto', sm: '151px' } }}
-              />
-              <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }} onClick={() => handleCardClick(result)}>
-                <CardContent sx={{ flex: '1 0 auto' }}>
-                  <Typography className='text' component="div" variant="h5" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
-                    <b>{result.name}</b>
-                  </Typography>
-                  <Typography className='text' variant="subtitle1" color="text.secondary" component="div" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
-                    {truncateText(result.description, 50)}
-                  </Typography>
-                </CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', pl: 1, pb: 1 }}>
-                  <IconButton aria-label="favorite" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
-                    <FavoriteRounded sx={{ height: 30, width: 30 }} />
-                  </IconButton>
-                  <IconButton aria-label="play/pause" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
-                    <ThumbUpAltRounded sx={{ height: 30, width: 30 }} />
-                  </IconButton>
-                  <IconButton aria-label="next" style={{color: darkMode ? '#F2F3F4' : '#111111'}}>
-                    <ThumbDownAltRounded sx={{ height: 30, width: 30 }} />
-                  </IconButton>
-                </Box>
-              </Box>
             </Card>
           ))}
         </div>
