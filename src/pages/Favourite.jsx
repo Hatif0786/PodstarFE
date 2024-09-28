@@ -12,10 +12,11 @@ import Typography from '@mui/material/Typography';
 import { MusicPlayerContext } from "../App";
 import "../css/Favorites.css";
 import { DeleteRounded } from '@mui/icons-material';
+import { FavoriteAlbumContext } from '../utils/Contexts/FavoriteAlbumContext';
 
 const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible, darkMode }) => {
   const [loader, setLoader] = useState(true);
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useContext(FavoriteAlbumContext);
   const navigate = useNavigate();
   const { handlePlay } = useContext(MusicPlayerContext);
 
@@ -44,7 +45,6 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
           },
         }
       );
-      // The response can be used if needed for UI updates
     } catch (error) {
       console.error('Error adding to recently played:', error);
     }
@@ -53,7 +53,6 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
   const handleCardClick = useCallback((item) => {
     if (!validateTokenAndNavigate()) return;
 
-    // Add to Recently Played and trigger playback
     addToRecentlyPlayed(item);
     handlePlay(item);
   }, [validateTokenAndNavigate, addToRecentlyPlayed, handlePlay]);
@@ -72,39 +71,26 @@ const Favorites = memo(({ setMenuOpened, logout, setUserlogged, setPlayerVisible
       });
 
       if (response.data !== "Album removed from favourites!") {
-        // Revert the deletion if unsuccessful
         setFavorites(originalFavorites);
       }
     } catch (error) {
       setFavorites(originalFavorites); // Restore in case of error
       console.error('Error removing from favorites:', error);
     }
-  }, [validateTokenAndNavigate, favorites]);
-
-  const fetchFavoriteResults = useCallback(async () => {
-    if (!validateTokenAndNavigate()) return;
-
-    try {
-      const response = await axios.get(`https://podstar-1.onrender.com/api/user/favourite-albums`, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
-      setFavorites(response.data);
-      setLoader(false);
-    } catch (error) {
-      console.error('Error fetching favorite results:', error);
-      setLoader(false);
-    }
-  }, [validateTokenAndNavigate]);
+  }, [validateTokenAndNavigate, favorites, setFavorites]);
 
   useEffect(() => {
-    fetchFavoriteResults();
-  }, [fetchFavoriteResults]);
+    // Set loader to false after fetching favorites from context
+    if (favorites) {
+      setLoader(false);
+    }
+  }, [favorites]);
 
   const truncateText = (text, maxLength) => {
+    if (!text) return '';  // Return empty string if text is undefined or null
     return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
   };
+  
 
   return (
     <div className="favorites-container">

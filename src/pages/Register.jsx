@@ -231,36 +231,36 @@ const Register = ({darkMode}) => {
             <div className="container text-center" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <form className="form" onSubmit={handleSubmit}>
                 <div className="flex-column">
-                  <label>Username </label>
+                  <label className="label">Username </label>
                 </div>
                 <div className="inputForm">
-                  <input type="text" className="input" placeholder="Enter your Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+                  <input type="text" className="input" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
                 </div>
 
                 <div className="flex-column">
-                  <label>First Name </label>
+                  <label className="label">First Name </label>
                 </div>
                 <div className="inputForm">
-                  <input type="text" className="input" placeholder="Enter your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                  <input type="text" className="input" placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                 </div>
 
                 <div className="flex-column">
-                  <label>Last Name </label>
+                  <label className="label">Last Name </label>
                 </div>
                 <div className="inputForm">
-                  <input type="text" className="input" placeholder="Enter your last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                  <input type="text" className="input" placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                 </div>
 
                 <div className="flex-column">
-                  <label>Phone </label>
+                  <label className="label">Phone </label>
                 </div>
                 <div className="inputForm">
-                  <input type="text" className="input" placeholder="Enter your phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  <input type="text" className="input" placeholder="Phone No." value={phone} onChange={(e) => setPhone(e.target.value)} />
                 </div>
                 
 
                 <div className="flex-column">
-                  <label>Email </label>
+                  <label className="label">Email </label>
                 </div>
                 <div className="inputForm">
                   <svg
@@ -273,12 +273,12 @@ const Register = ({darkMode}) => {
                       <path d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"></path>
                     </g>
                   </svg>
-                  <input type="text" className="input" placeholder="Enter your Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                  <input type="text" className="input" placeholder="Email Id" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
                 
 
                 <div className="flex-column">
-                  <label>Password </label>
+                  <label className="label">Password </label>
                 </div>
                 <div className="inputForm">
                   <svg
@@ -293,7 +293,7 @@ const Register = ({darkMode}) => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     className="input"
-                    placeholder="Enter your Password"
+                    placeholder="Password"
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -309,7 +309,7 @@ const Register = ({darkMode}) => {
                   
 
                 <div className="flex-column">
-                  <label>Confirm Password </label>
+                  <label className="label">Confirm Password </label>
                 </div>
                 <div className="inputForm">
                   <svg
@@ -324,7 +324,7 @@ const Register = ({darkMode}) => {
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     className="input"
-                    placeholder="Please confirm your Password"
+                    placeholder="Confirm Password"
                     value={confirmPassword} 
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />

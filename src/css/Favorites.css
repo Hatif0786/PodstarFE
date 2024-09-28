@@ -26,7 +26,7 @@ body {
 .favorites-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 cards in a row on desktop */
-    gap: 16px; /* Spacing between cards */
+    gap: 20px; /* Spacing between cards */
 }
 
 .favorites-card {
@@ -36,6 +36,11 @@ body {
     box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.1);
     background-color: white; /* Adjust as needed */
     overflow: hidden; /* Ensure content inside card does not overflow */
+
+}
+
+.favorites-card:hover{
+    cursor: pointer;
 }
 
 .card-image {
