@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from "js-cookie";
-import "../css/login.css";
+import "../css/Register.css";
 
 
 const Register = ({darkMode}) => {

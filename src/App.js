@@ -36,6 +36,7 @@ import Profile from "./pages/Profile";
 import ProtectedRoute from "../src/utils/ProtectedRoute"; // Import the ProtectedRoute component
 import Announcement from "./components/Announcement";
 import Statistics from "./pages/Statistics";
+import UserManagement from "./pages/UserManagement";
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
 
@@ -299,6 +300,26 @@ function App() {
                       path="*"
                       element={<NotFound darkMode={darkMode} />}
                     />
+
+                    <Route
+                      path="/user-mgmt"
+                      element={
+                        <ProtectedRoute>
+                          <UserManagement
+                            darkMode={darkMode}
+                            setIsVerified={setIsVerified}
+                            setMenuOpened={setMenuOpened}
+                            logout={logout}
+                            setUserlogged={setUserlogged}
+                            setPlayerVisible={setPlayerVisible}
+                            profileImageUrl={profileImageUrl}
+                            setProfileImageUrl={setProfileImageUrl}
+                          />
+                        </ProtectedRoute>
+                      }
+                    />
+
+
                     <Route
                       path="/profile"
                       element={
