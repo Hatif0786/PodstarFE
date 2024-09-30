@@ -15,7 +15,6 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     const navigate = useNavigate();
     const [loadingUpdate, setLoadingUpdate] = useState(false); // For update button
     const [loadingAdd, setLoadingAdd] = useState(false); // For add button
-    const [loadingDelete, setLoadingDelete] = useState(false); // For delete button
 
     const [newUser, setNewUser] = useState({
       username: '',
