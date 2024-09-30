@@ -13,6 +13,10 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     const [selectedUser, setSelectedUser] = useState(null);
     const [loader, setLoader] = useState(true);
     const navigate = useNavigate();
+    const [loadingUpdate, setLoadingUpdate] = useState(false); // For update button
+    const [loadingAdd, setLoadingAdd] = useState(false); // For add button
+    const [loadingDelete, setLoadingDelete] = useState(false); // For delete button
+
     const [newUser, setNewUser] = useState({
       username: '',
       email: '',
@@ -75,6 +79,7 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     };
   
     const handleUpdate = async () => {
+      setLoadingUpdate(true);
       if (!Cookies.get("token")) {
             handleLogout();
             return;
@@ -92,8 +97,10 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
         setUsers(users.map(user => (user.id === selectedUser.id ? { ...user, role: selectedUser.role } : user)));
       } catch (error) {
         console.error("Error updating user:", error);
+      }finally {
+        setLoadingUpdate(false); // Stop loading
+        closeModal();
       }
-      closeModal();
     };
   
     // Open Add New User Modal
@@ -117,6 +124,7 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
   
     // Handle Add New User
     const handleAddUser = async () => {
+        setLoadingAdd(true);
         if (!Cookies.get("token")) {
           handleLogout();
           return;
@@ -149,6 +157,9 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
           console.error("Error adding user:", error);
           alert("Failed to add user.");
         }
+        finally {
+          setLoadingAdd(false); // Stop loading
+        }
       };
       
   
@@ -172,7 +183,7 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
     <div className="user-management-container">
       <div className="user-management-header">
         <h1>User Management</h1>
-        <button className="add-user-button" onClick={openAddModal}>Add New User</button>
+        <button className="add-user-button" style={{borderRadius:"30px"}} onClick={openAddModal}>Add New User</button>
       </div>
       <div className="search-bar">
         <input
@@ -180,8 +191,9 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
           placeholder="Search users..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          style={{borderRadius:"30px", fontSize:"16px"}}
         />
-        <button className="search-button">Search</button>
+        <button className="search-button" style={{borderRadius:"30px"}}>Search</button>
       </div>
 
       {loader ? (
@@ -205,10 +217,10 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
               <Stack direction="row" justifyContent="center" spacing={1} style={{marginBottom: "20px"}}>
                 <Chip label={user.role} color={getChipColor(user.role)} />
               </Stack>
-              <button className="edit-button" onClick={() => openUpdateModal(user)}>
+              <button className="edit-button" style={{borderRadius:"30px"}} onClick={() => openUpdateModal(user)}>
                 Update
               </button>
-              <button className="delete-button" onClick={() => handleDelete(user.id)}>
+              <button className="delete-button" style={{borderRadius:"30px"}} onClick={() => handleDelete(user.id)}>
                 Delete
               </button>
             </div>
@@ -256,8 +268,21 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
               <option value="ADMIN">ADMIN</option>
             </select>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <button onClick={handleUpdate} style={{ borderRadius: '20px' }}>Update</button>
-              <button onClick={closeModal} style={{ borderRadius: '20px' }}>Cancel</button>
+              <button onClick={handleUpdate} style={{ borderRadius: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center'  }}>
+                {!loadingUpdate ? 'Update' : (
+                  <div className="dot-spinner" style={{ height: "95%", marginLeft: "10px", marginRight:"10px" }}>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                  </div>
+                )}
+              </button>
+              <button onClick={closeModal} style={{ borderRadius: '30px' }}>Cancel</button>
             </div>
           </div>
         </div>
@@ -311,8 +336,21 @@ const UserManagement = ({ setMenuOpened, logout, setUserlogged, setPlayerVisible
               onChange={(e) => setNewUser({ ...newUser, confirmPassword: e.target.value })}
             />
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <button onClick={handleAddUser} style={{ borderRadius: '20px' }}>Add User</button>
-              <button onClick={closeAddModal} style={{ borderRadius: '20px' }}>Cancel</button>
+              <button onClick={handleAddUser} style={{ borderRadius: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center'  }}>
+                {!loadingAdd ? 'Add User' : (
+                  <div className="dot-spinner" style={{ height: "95%", marginLeft: "10px", marginRight:"10px" }}>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                  </div>
+                )}
+              </button>
+              <button onClick={closeAddModal} style={{ borderRadius: '30px' }}>Cancel</button>
             </div>
           </div>
         </div>
