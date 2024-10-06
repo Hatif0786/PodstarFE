@@ -8,7 +8,7 @@ import { Country, State } from 'country-state-city';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 
-const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
+const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified, enqueueSnackbar }) => {
     const [tabValue, setTabValue] = useState(0);
     const [username, setUsername] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -211,11 +211,12 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                     expires: 1 / 24, // Set cookie expiration to 1 hour
                 });
                 // You might want to update the user cookie here if needed
+                enqueueSnackbar("Profile updated successfully!", { variant: 'success' });
             } else {
                 alert('Failed to update profile');
             }
         } catch (error) {
-            console.error('Error updating profile:', error);
+            enqueueSnackbar(error, { variant: 'error' });
         } finally {
             setLoading(false);
         }
@@ -280,6 +281,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                 setIsVerified(true);
                 setOtpSent(false);
                 setBeforeOtp(true);
+                enqueueSnackbar("Account verified successfully!", { variant: 'success' });
             }else{
                 setLoader(false);
                 setErr('Invalid OTP!');
@@ -351,13 +353,15 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                     expires: 1 / 24, // Set cookie expiration to 1 hour
                 });
                 setLoadingSec(false);
+                enqueueSnackbar("Image updated successfully!", { variant: 'success', vertical: 'top', horizontal: 'center' });
             }
         } catch (error) {
             console.error('Error updating profile image:', error);
         }
     };
 
-    const handleAddressUpdate = async () => {
+    const handleAddressUpdate = async (event) => {
+        event.preventDefault(); // Prevent form submission and page reload
         // Validate that all required fields are provided and not null/empty
         if (!houseNo || !streetName || !landmark || !city || !selectedState || !selectedCountry) {
           setErr("Please fill in all required fields."); // Set error message if any field is missing
@@ -374,14 +378,13 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
           setErrTimeout(timeout);
           return;
         }
-
+        setLoading(true);
         const selectedCountryObj = Country.getCountryByCode(selectedCountry); // Get country name by code
         const selectedStateObj = State.getStateByCodeAndCountry(selectedState, selectedCountry); // Get state name by code
 
         const countryName = selectedCountryObj ? selectedCountryObj.name : selectedCountry;
         const stateName = selectedStateObj ? selectedStateObj.name : selectedState;
       
-        setLoader(true); // Start loader
       
         try {
           const resp = await axios.put(
@@ -404,14 +407,13 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
           // Handle successful response
           if (resp.status === 200) {
             setErr(""); // Clear any error message
-            console.log("Address updated successfully:", resp.data);
+            enqueueSnackbar("Address updated successfully!", { variant: 'success' });
             // You can handle any post-update logic here, like displaying success notifications
           }
       
         } catch (error) {
           // Handle error
           if (error.response) {
-                console.error("Error response:", error.response); // Log full error response
                 const errorMessage = error.response.data.message;
                 setErr(errorMessage || "Failed to update address.");
             }
@@ -425,9 +427,8 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
           }, 3000);
       
           setErrTimeout(timeout);
-      
-        } finally {
-          setLoader(false); // Stop loader
+        }finally{
+            setLoading(false);
         }
       };
       

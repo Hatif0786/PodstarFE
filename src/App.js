@@ -37,6 +37,7 @@ import ProtectedRoute from "../src/utils/ProtectedRoute"; // Import the Protecte
 import Announcement from "./components/Announcement";
 import Statistics from "./pages/Statistics";
 import UserManagement from "./pages/UserManagement";
+import { useSnackbar } from "notistack";
 // Create a context to share the music player state
 export const MusicPlayerContext = createContext();
 
@@ -81,6 +82,7 @@ function App() {
   const userCookie = Cookies.get("user");
   const userRole = userCookie ? JSON.parse(userCookie).role : null;
   const [isVerified, setIsVerified] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handlePlay = useCallback((item) => {
     const newAudioLists = [
@@ -325,6 +327,7 @@ function App() {
                       element={
                         <ProtectedRoute>
                           <Profile
+                            enqueueSnackbar={enqueueSnackbar}
                             darkMode={darkMode}
                             setIsVerified={setIsVerified}
                             setMenuOpened={setMenuOpened}
