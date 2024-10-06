@@ -1,16 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import "../css/Profile.css";
-import { TextField, InputAdornment, Button } from '@mui/material';
+import { Tabs, Tab, Box, TextField, Button } from '@mui/material';
+import { InputAdornment } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
 import Cookies from "js-cookie";
+import { Country, State } from 'country-state-city';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 
-const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
+const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified, enqueueSnackbar }) => {
+    const [tabValue, setTabValue] = useState(0);
     const [username, setUsername] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [houseNo, setHouseNo] = useState('');
+    const [streetName, setStreetName] = useState('');
+    const [landmark, setLandmark] = useState('');
+    const [city, setCity] = useState('');
+    const [countries, setCountries] = useState([]);
+    const [states, setStates] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState('');
+    const [selectedState, setSelectedState] = useState('');
     const [role, setRole] = useState('');
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -22,24 +34,145 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
     const [errors, setErrors] = useState({});
     const [errTimeout, setErrTimeout] = useState(null);
     const [err, setErr] = useState("");
+    const errTimeoutRef = useRef(null);
 
-    useEffect(() => {
+    const handleGetAddress = useCallback(async () => {
+    setLoader(true); // Start loader
+    try {
+        const resp = await axios.get(`https://podstar-1.onrender.com/api/address`, {
+        headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+        });
+
+        if (resp.status === 200) {
+        const { houseNo, streetName, landmark, city, state, country } = resp.data;
+
+        // Update your states with the address details
+        setHouseNo(houseNo);
+        setStreetName(streetName);
+        setLandmark(landmark);
+        setCity(city || ''); // Default to empty string if undefined
+
+        const allCountries = Country.getAllCountries();
+        const selectedCountryObj = allCountries.find(c => c.name === country);
+
+        if (selectedCountryObj) {
+            setSelectedCountry(selectedCountryObj.isoCode); // Set ISO code
+        } else {
+            console.error("Country not found in list:", country);
+            setSelectedCountry(''); // Handle case where country isn't found
+        }
+
+        // Find the state ISO code (if state name is provided)
+        if (selectedCountryObj) {
+            const countryStates = State.getStatesOfCountry(selectedCountryObj.isoCode);
+            const selectedStateObj = countryStates.find(
+            (st) => st.name.toLowerCase() === state.toLowerCase()
+            );
+
+            if (selectedStateObj) {
+            setSelectedState(selectedStateObj.isoCode); // Set state using ISO code
+            } else {
+            console.error("State not found:", state);
+            setSelectedState(''); // Handle case where state isn't found
+            }
+        }
+
+        setErr(""); // Clear any previous error message
+        }
+    } catch (error) {
+        // Error handling as before
+        if (error.response) {
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage === "Address doesn't exist for user!!!") {
+            setErr("Address doesn't exist for user!!!");
+        } else if (errorMessage === "User Doesn't found with this id!!") {
+            setErr("User Doesn't found with this id!!");
+        }
+        }
+    } finally {
+        setLoader(false); // Stop loader
+
+        // Clear any previous timeout
+        if (errTimeoutRef.current) {
+        clearTimeout(errTimeoutRef.current);
+        }
+
+        const timeout = setTimeout(() => {
+        setErr("");
+        }, 3000);
+
+        errTimeoutRef.current = timeout; // Save timeout ID to ref
+    }
+    }, []); // No need to include errTimeout in the dependency array
+    // Ensure all necessary dependencies are included
+      
+      useEffect(() => {
+        const allCountries = Country.getAllCountries();
+        setCountries(allCountries);
+      }, []);
+      
+      // Fetch states when country is selected
+      useEffect(() => {
+        if (selectedCountry) {
+          const countryStates = State.getStatesOfCountry(selectedCountry);
+          setStates(countryStates);
+        } else {
+          setStates([]);
+        }
+      }, [selectedCountry]);
+      
+    //   useEffect(() => {
+    //     if (selectedState) {
+    //       const stateCities = City.getCitiesOfState(selectedCountry, selectedState);
+    //       setCities(stateCities);
+    //     } else {
+    //       setCities([]);
+    //     }
+    //   }, [selectedState, selectedCountry]);
+      
+      // Handle country change
+      const handleCountryChange = (event) => {
+        setSelectedCountry(event.target.value);
+      };
+      
+      // Handle state change
+      const handleStateChange = (event) => {
+        setSelectedState(event.target.value);
+      };
+      
+      // Handle city change
+      const handleCityChange = (event) => {
+        setCity(event.target.value);
+      };
+      
+      useEffect(() => {
         const userCookie = Cookies.get("user");
         if (userCookie) {
-            const userData = JSON.parse(userCookie);
-            setUsername(userData.username || '');
-            setFirstName(userData.firstName || '');
-            setLastName(userData.lastName || '');
-            setPhone(userData.phone || '');
-            setEmail(userData.email || '');
-            setRole(userData.role || '');
-            setIsEmailVerified(userData.verified || false);
+          const userData = JSON.parse(userCookie);
+          setUsername(userData.username || '');
+          setFirstName(userData.firstName || '');
+          setLastName(userData.lastName || '');
+          setPhone(userData.phone || '');
+          setEmail(userData.email || '');
+          setRole(userData.role || '');
+          setIsEmailVerified(userData.verified || false);
         }
-    }, []);
+      
+        // Fetch address details on component mount
+        handleGetAddress();
+      }, [handleGetAddress]);
+      
 
     const validatePhone = (phone) => {
         const re = /^\d{10}$/;
         return re.test(phone);
+    };
+
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
     };
 
     const handleUpdate = async (event) => {
@@ -78,15 +211,17 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                     expires: 1 / 24, // Set cookie expiration to 1 hour
                 });
                 // You might want to update the user cookie here if needed
+                enqueueSnackbar("Profile updated successfully!", { variant: 'success' });
             } else {
                 alert('Failed to update profile');
             }
         } catch (error) {
-            console.error('Error updating profile:', error);
+            enqueueSnackbar(error, { variant: 'error' });
         } finally {
             setLoading(false);
         }
     }
+      
 
     const handleSendOtp = async () => {
         setLoader(true);
@@ -146,6 +281,7 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                 setIsVerified(true);
                 setOtpSent(false);
                 setBeforeOtp(true);
+                enqueueSnackbar("Account verified successfully!", { variant: 'success' });
             }else{
                 setLoader(false);
                 setErr('Invalid OTP!');
@@ -217,13 +353,85 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                     expires: 1 / 24, // Set cookie expiration to 1 hour
                 });
                 setLoadingSec(false);
+                enqueueSnackbar("Image updated successfully!", { variant: 'success', vertical: 'top', horizontal: 'center' });
             }
         } catch (error) {
             console.error('Error updating profile image:', error);
         }
     };
-    
 
+    const handleAddressUpdate = async (event) => {
+        event.preventDefault(); // Prevent form submission and page reload
+        // Validate that all required fields are provided and not null/empty
+        if (!houseNo || !streetName || !landmark || !city || !selectedState || !selectedCountry) {
+          setErr("Please fill in all required fields."); // Set error message if any field is missing
+      
+          // Error message timeout logic
+          if (errTimeout) {
+            clearTimeout(errTimeout);
+          }
+      
+          const timeout = setTimeout(() => {
+            setErr("");
+          }, 3000);
+      
+          setErrTimeout(timeout);
+          return;
+        }
+        setLoading(true);
+        const selectedCountryObj = Country.getCountryByCode(selectedCountry); // Get country name by code
+        const selectedStateObj = State.getStateByCodeAndCountry(selectedState, selectedCountry); // Get state name by code
+
+        const countryName = selectedCountryObj ? selectedCountryObj.name : selectedCountry;
+        const stateName = selectedStateObj ? selectedStateObj.name : selectedState;
+      
+      
+        try {
+          const resp = await axios.put(
+            `https://podstar-1.onrender.com/api/address`, 
+            {
+              houseNo: parseInt(houseNo, 10),         // Pass the address details as body
+              streetName,
+              landmark,
+              city,
+              state: stateName,  // Pass the state name instead of ISO code
+              country: countryName // Pass the country name instead of ISO code
+            }, 
+            {
+              headers: {
+                Authorization: `Bearer ${Cookies.get("token")}`, // Include the token for authentication
+              },
+            }
+          );
+      
+          // Handle successful response
+          if (resp.status === 200) {
+            setErr(""); // Clear any error message
+            enqueueSnackbar("Address updated successfully!", { variant: 'success' });
+            // You can handle any post-update logic here, like displaying success notifications
+          }
+      
+        } catch (error) {
+          // Handle error
+          if (error.response) {
+                const errorMessage = error.response.data.message;
+                setErr(errorMessage || "Failed to update address.");
+            }
+          // Error message timeout logic
+          if (errTimeout) {
+            clearTimeout(errTimeout);
+          }
+      
+          const timeout = setTimeout(() => {
+            setErr("");
+          }, 3000);
+      
+          setErrTimeout(timeout);
+        }finally{
+            setLoading(false);
+        }
+      };
+      
     return (
         <>
         {loader && (
@@ -303,81 +511,201 @@ const Profile = ({ profileImageUrl, setProfileImageUrl, setIsVerified }) => {
                         </div>
                     </div>
                     <div className="col-xl-8">
-                        <div className="card132 mb-4">
-                            <h3 className="card-header text-center" style={{ marginTop: "20px" }}>Account Details</h3>
-                            <div className="card-body">
-                                <form onSubmit={handleUpdate}>
-                                    <div className="mb-3">
-                                        <TextField required id="inputUsername" className="form-control " label="Username" variant="filled" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} disabled={true} />
-                                    </div>
-                                    <div className="row gx-3 mb-3">
-                                        <div className="col-md-6">
-                                            <TextField required id="inputFirstName" className="form-control" type="text" label="First Name" variant="filled" placeholder="Enter your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} disabled={loading} />
-                                        </div>
-                                        <div id="inpLast" className="col-md-6">
-                                            <TextField required id="inputLastName" className="form-control" type="text" label="Last Name" variant="filled" placeholder="Enter your Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} disabled={loading} />
-                                        </div>
-                                    </div>
-                                    <div className="row gx-3 mb-3">
-                                        <div className="col-md-6">
-                                            <TextField required id="inputPhone" className="form-control" type="number" label="Phone Number" variant="filled" placeholder="Enter your Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
-                                        </div>
-                                        <div id="inpRole" className="col-md-6">
-                                            <TextField id="inputRole" className="form-control" type="text" label="Access Rights" variant="filled" placeholder="Your Accessibility" value={role} disabled />
-                                        </div>
-                                    </div>
-                                    <div className="mb-3">
-                                        <TextField 
-                                            id="inputEmail" 
-                                            className="form-control" 
-                                            type="email" 
-                                            label="Email" 
-                                            variant="filled" 
-                                            placeholder="Enter your email" 
-                                            value={email} 
-                                            disabled={isEmailVerified}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        {isEmailVerified ? (
-                                                            <CheckCircleOutline color="success" />
-                                                        ) : (
-                                                            <Button
-                                                                variant="contained"
-                                                                style={{ backgroundColor: '#ffe303', color: 'black', borderRadius:"18px" }}
-                                                                onClick={handleSendOtp}
-                                                                disabled={loading}
-                                                            >
-                                                                Verify
-                                                            </Button>
-                                                        )}
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                        />
-                                    </div>
-                                    
-                                    
+                        <h3 className="card-header text-center" style={{ padding: "20px", marginBottom:"20px" }}>Account Details</h3>
+                        <Box sx={{ width: '100%' }}>
+                            <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" TabIndicatorProps={{
+                                style: {
+                                    backgroundColor: '#be1adb', // Changes the indicator color
+                                },
+                            }}
+                            sx={{
+                                '.MuiTab-root': {
+                                    color: '#be1adb', // Inactive tab text color
+                                },
+                                '.Mui-selected': {
+                                    color: '#be1adb !important', // Active tab text color
+                                }
+                            }}
+                            >
+                                <Tab label="Basic" />
+                                <Tab label="Address" />
+                            </Tabs>
 
-                                    <button className="btn btn1" type="submit">
-                                        {!loading && (<div>Save Changes</div>)}
-                                        {loading && (
-                                            <div className="dot-spinner" style={{ height: "95%", marginLeft: "10px" }}>
-                                                <div className="dot-spinner__dot"></div>
-                                                <div className="dot-spinner__dot"></div>
-                                                <div className="dot-spinner__dot"></div>
-                                                <div className="dot-spinner__dot"></div>
-                                                <div className="dot-spinner__dot"></div>
-                                                <div className="dot-spinner__dot"></div>
-                                                <div className="dot-spinner__dot"></div>
-                                                <div className="dot-spinner__dot"></div>
-                                            </div>
-                                        )}
-                                    </button>
-                                </form>
-                            </div>
-                            
-                        </div>
+                            {tabValue === 0 && (
+                                <Box sx={{ paddingTop:'20px' }}>
+                                    <div className="card132 mb-4">
+                                        <div className="card-body">
+                                            <form onSubmit={handleUpdate}>
+                                                <div className="mb-3">
+                                                    <TextField required id="inputUsername" className="form-control " label="Username" variant="filled" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} disabled={true} />
+                                                </div>
+                                                <div className="row gx-3 mb-3">
+                                                    <div className="col-md-6">
+                                                        <TextField required id="inputFirstName" className="form-control" type="text" label="First Name" variant="filled" placeholder="Enter your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} disabled={loading} />
+                                                    </div>
+                                                    <div id="inpLast" className="col-md-6">
+                                                        <TextField required id="inputLastName" className="form-control" type="text" label="Last Name" variant="filled" placeholder="Enter your Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} disabled={loading} />
+                                                    </div>
+                                                </div>
+                                                <div className="row gx-3 mb-3">
+                                                    <div className="col-md-6">
+                                                        <TextField required id="inputPhone" className="form-control" type="number" label="Phone Number" variant="filled" placeholder="Enter your Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
+                                                    </div>
+                                                    <div id="inpRole" className="col-md-6">
+                                                        <TextField id="inputRole" className="form-control" type="text" label="Access Rights" variant="filled" placeholder="Your Accessibility" value={role} disabled />
+                                                    </div>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <TextField 
+                                                        id="inputEmail" 
+                                                        className="form-control" 
+                                                        type="email" 
+                                                        label="Email" 
+                                                        variant="filled" 
+                                                        placeholder="Enter your email" 
+                                                        value={email} 
+                                                        disabled={isEmailVerified}
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <InputAdornment position="end">
+                                                                    {isEmailVerified ? (
+                                                                        <CheckCircleOutline color="success" />
+                                                                    ) : (
+                                                                        <Button
+                                                                            variant="contained"
+                                                                            style={{ backgroundColor: '#ffe303', color: 'black', borderRadius:"18px" }}
+                                                                            onClick={handleSendOtp}
+                                                                            disabled={loading}
+                                                                        >
+                                                                            Verify
+                                                                        </Button>
+                                                                    )}
+                                                                </InputAdornment>
+                                                            ),
+                                                        }}
+                                                    />
+                                                </div>
+                                                
+                                                
+
+                                                <button className="btn btn1" type="submit">
+                                                    {!loading && (<div>Save Changes</div>)}
+                                                    {loading && (
+                                                        <div className="dot-spinner" style={{ height: "95%", marginLeft: "10px" }}>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                        </div>
+                                                    )}
+                                                </button>
+                                            </form>
+                                        </div>
+                                        
+                                    </div>
+                                </Box>
+                            )}
+                            {tabValue === 1 && (
+                                <Box sx={{ paddingTop:'20px' }}>
+                                    <div className="card132 mb-4">
+                                        <div className="card-body">
+                                            <form onSubmit={handleAddressUpdate}>
+                                                <div className="row gx-3 mb-3">
+                                                    <div className="col-md-6">
+                                                        <TextField required id="inputHouseNo" className="form-control" type="text" label="House No." variant="filled" placeholder="Enter your House No." value={houseNo} onChange={(e) => setHouseNo(e.target.value)}/>
+                                                    </div>
+                                                    <div id="inpLast" className="col-md-6">
+                                                        <TextField required id="inputStreetName" className="form-control" type="text" label="Street Name" variant="filled" placeholder="Enter your Street name" value={streetName} onChange={(e) => setStreetName(e.target.value)} />
+                                                    </div>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <TextField required id="inputLandmark" className="form-control " label="Landmark" variant="filled" placeholder="Enter your Landmark" value={landmark} onChange={(e) => setLandmark(e.target.value)}/>
+                                                </div>
+                                                <div className="row gx-3 mb-3">
+                                                    <div className="col-md-6">
+                                                    <TextField 
+                                                        required 
+                                                        id="inputCity" 
+                                                        className="form-control" 
+                                                        type="text" 
+                                                        label="City" 
+                                                        variant="filled" 
+                                                        placeholder="Enter your City" 
+                                                        value={city} 
+                                                        onChange={handleCityChange} 
+                                                    />
+                                                    </div>
+                                                    <div id="inpRole" className="col-md-6">
+                                                        <FormControl variant="standard" sx={{ m: 1}} fullWidth>
+                                                            <InputLabel id="state-select-label">State</InputLabel>
+                                                            <Select
+                                                            labelId="state-select-label"
+                                                            id="state-select"
+                                                            value={selectedState}
+                                                            onChange={handleStateChange}
+                                                            label="State"
+                                                            disabled={!selectedCountry} // Disable if no country is selected
+                                                            >
+                                                            <MenuItem value="">
+                                                                <em>None</em>
+                                                            </MenuItem>
+                                                            {states.map((state) => (
+                                                                <MenuItem key={state.isoCode} value={state.isoCode}>
+                                                                {state.name}
+                                                                </MenuItem>
+                                                            ))}
+                                                            </Select>
+                                                        </FormControl>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="mb-3">
+                                                    <FormControl variant="standard" sx={{ m: 1}} fullWidth>
+                                                        <InputLabel id="country-select-label">Country</InputLabel>
+                                                        <Select
+                                                        labelId="country-select-label"
+                                                        id="country-select"
+                                                        value={selectedCountry}
+                                                        onChange={handleCountryChange}
+                                                        label="Country"
+                                                        >
+                                                        <MenuItem value="">
+                                                            <em>None</em>
+                                                        </MenuItem>
+                                                        {countries.map((country) => (
+                                                            <MenuItem key={country.isoCode} value={country.isoCode}>
+                                                            {country.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                        </Select>
+                                                    </FormControl>
+                                                </div>    
+                                                <button className="btn btn1" type="submit">
+                                                    {!loading && (<div>Update Address</div>)}
+                                                    {loading && (
+                                                        <div className="dot-spinner" style={{ height: "95%", marginLeft: "10px" }}>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                            <div className="dot-spinner__dot"></div>
+                                                        </div>
+                                                    )}
+                                                </button>
+                                            </form>
+                                        </div>
+                                        
+                                    </div>
+                                </Box>
+                            )}
+                        </Box>
                     </div>
                 </div>
                 )}
